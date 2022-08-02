@@ -1,7 +1,7 @@
 const express = require("express");
 const port = 8080;
 const { request } = require("undici");
-const { clientId, clientSecret } = require("./token.json");
+const { clientId, clientSecret } = require("./setting_variable.json");
 
 async function getJSONResponse(body) {
   let fullBody = "";
