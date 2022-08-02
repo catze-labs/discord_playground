@@ -8,6 +8,7 @@ const client = new Client({
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
   ],
 });
 
@@ -15,6 +16,7 @@ client.once("ready", () => {
   console.log("Ready!");
 });
 
+// 슬래시 명령
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
   const { commandName, options } = interaction;
@@ -52,12 +54,31 @@ client.on("interactionCreate", async (interaction) => {
       console.log("Get Tweet Error");
     }
   }
+
+  if (commandName === "members") {
+    const guildId = interaction.guildId;
+
+    // 길드 멤버 리스트 가져오기
+    let result = "";
+    const guild = client.guilds.cache.get(guildId);
+    guild.members
+      .list({
+        cache: true,
+      })
+      .then((members) => {
+        const channel = client.channels.cache.get(interaction.channelId);
+
+        members.forEach((member) => {
+          result += `${member.user.id}, ${member.user.username}, #${member.user.discriminator}\n`;
+        });
+
+        channel.send(result);
+      });
+  }
 });
 
+// 이미지 올렸는지 확인
 client.on("messageCreate", (msg) => {
-  console.log(msg);
-  console.log(msg.cleanContent);
-
   const attachmentsList = msg.attachments;
   let imgIsIncluded = false;
 

@@ -21,6 +21,7 @@ const commands = [
     .setDescription(
       "Verification your tweet for confirm exactly mentioned @CyberGalz"
     ),
+  new SlashCommandBuilder().setName("members").setDescription("list members"),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: "10" }).setToken(token);
