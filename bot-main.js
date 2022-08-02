@@ -63,16 +63,36 @@ client.on("interactionCreate", async (interaction) => {
     const guild = client.guilds.cache.get(guildId);
     guild.members
       .list({
-        cache: true,
+        limit: 1000,
       })
       .then((members) => {
-        const channel = client.channels.cache.get(interaction.channelId);
-
         members.forEach((member) => {
           result += `${member.user.id}, ${member.user.username}, #${member.user.discriminator}\n`;
         });
 
-        channel.send(result);
+        interaction.reply(result);
+      })
+      .catch((err) => {
+        interaction.reply("member listup error");
+      });
+  }
+
+  if (commandName === "roles") {
+    const guildId = interaction.guildId;
+    let result = "";
+
+    const guild = client.guilds.cache.get(guildId);
+    guild.roles
+      .fetch()
+      .then((roles) => {
+        roles.forEach((role) => {
+          result += `${role.name} : ${role.id}\n`;
+        });
+
+        interaction.reply(result);
+      })
+      .catch((err) => {
+        interaction.reply("role listup error");
       });
   }
 });
