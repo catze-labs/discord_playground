@@ -1,8 +1,15 @@
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, GatewayIntentBits, Message } = require("discord.js");
 const { tweet_api_bearer, token } = require("./setting_variable.json");
 var axios = require("axios");
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+});
 
 client.once("ready", () => {
   console.log("Ready!");
@@ -45,6 +52,11 @@ client.on("interactionCreate", async (interaction) => {
       console.log("Get Tweet Error");
     }
   }
+});
+
+client.on("messageCreate", (msg) => {
+  console.log(msg);
+  console.log(msg.cleanContent);
 });
 
 client.login(token);
