@@ -57,6 +57,21 @@ client.on("interactionCreate", async (interaction) => {
 client.on("messageCreate", (msg) => {
   console.log(msg);
   console.log(msg.cleanContent);
+
+  const attachmentsList = msg.attachments;
+  let imgIsIncluded = false;
+
+  attachmentsList.forEach((v) => {
+    if (v.contentType === "image/jpeg") {
+      imgIsIncluded = true;
+    }
+  });
+
+  if (imgIsIncluded) {
+    // msg.reply("Img is included!");
+    const channel = client.channels.cache.get(msg.channelId);
+    channel.send("Img is included");
+  }
 });
 
 client.login(token);
