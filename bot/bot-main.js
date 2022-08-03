@@ -119,4 +119,21 @@ client.on('messageCreate', (msg) => {
   }
 });
 
+client.on('guildMemberAdd', async (member) => {
+  try {
+    var config = {
+      method: 'post',
+      url: `http://localhost:8080/bot/newUser`,
+      data: {
+        uuid: msg.author.id,
+      },
+    };
+
+    const result = await axios(config);
+    console.log(result);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 client.login(token);
