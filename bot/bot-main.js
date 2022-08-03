@@ -102,7 +102,7 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 // 이미지 올렸는지 확인
-client.on('messageCreate', (msg) => {
+client.on('messageCreate', async (msg) => {
   const attachmentsList = msg.attachments;
   let imgIsIncluded = false;
 
@@ -119,18 +119,19 @@ client.on('messageCreate', (msg) => {
   }
 });
 
+// 서버에 신규 유저 유입 시 DB 에 만들기
 client.on('guildMemberAdd', async (member) => {
   try {
     var config = {
       method: 'post',
       url: `http://localhost:8080/bot/newUser`,
       data: {
-        uuid: msg.author.id,
+        uuid: member.id,
       },
     };
 
     const result = await axios(config);
-    console.log(result);
+    console.log(result.data);
   } catch (err) {
     console.log(err);
   }
