@@ -52,6 +52,7 @@ client.on("interactionCreate", async (interaction) => {
     } catch (e) {
       console.log(e);
       console.log("Get Tweet Error");
+      await interaction.reply("Internal Server Error: Plz contact admin");
     }
   }
 
@@ -59,6 +60,8 @@ client.on("interactionCreate", async (interaction) => {
     const guildId = interaction.guildId;
 
     // 길드 멤버 리스트 가져오기
+    let memberList = [];
+    let maxMemberId = 0;
     let result = "";
     const guild = client.guilds.cache.get(guildId);
     guild.members
@@ -68,6 +71,7 @@ client.on("interactionCreate", async (interaction) => {
       .then((members) => {
         members.forEach((member) => {
           result += `${member.user.id}, ${member.user.username}, #${member.user.discriminator}\n`;
+          maxMemberId = maxMemberId < member.id ? member.id : maxMemberId;
         });
 
         interaction.reply(result);
