@@ -1,15 +1,16 @@
 # Catze Discord Bot Test Repo
 
 ## Tech Stack
+
 ### Server : NestJS + Prisma
+
 ### Client : multiple web + Discord Bot
 
-
 ## Directory Information
+
 - `/bot` : discord bot
 - `/prisma` : prisma ORM setting files
 - `/src` : NestJS src files
-
 
 ## Installation
 
@@ -19,10 +20,10 @@ $ npm install
 
 ## Running the app
 
-## Before Running 
+## Before Running
+
 - NestJS running not needs spcial .env files
 - For Running Discord Bot, You should make `setting_variable.json` and should set specific env variables.
-
 
 ```bash
 # development
@@ -49,4 +50,9 @@ $ npm run test:cov
 ```
 
 ## Support
+
 Email to `phantola@cybergalznft.com`
+
+## Other Info
+
+- npx prisma migrate dev --name "init" => DB 엔티티 초기화
