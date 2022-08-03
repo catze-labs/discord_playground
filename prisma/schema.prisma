@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,10 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model UserToken {
-  id Int @id @default(autoincrement())
-  discordUUID String @unique
+model User {
+  idx          Int      @id @default(autoincrement())
+  discordUUID String   @unique(map: "UserToken_discordUUID_key")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  Cake Cake?
+}
+
+model Cake {
+  idx          Int      @id @default(autoincrement())
+  userIdx Int @unique
+  User User  @relation(fields : [userIdx], references : [idx])
   cake Int @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt @default(now())
+  updatedAt   DateTime @default(now())
 }

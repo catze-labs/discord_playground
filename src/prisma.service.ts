@@ -15,9 +15,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async findUserByIdx(idx: number) {
     try {
-      return await this.userToken.findUnique({
+      return await this.user.findUnique({
         where: {
-          id: idx,
+          idx,
         },
       });
     } catch (e) {
@@ -27,7 +27,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async findUserByDiscordUUID(uuid: string) {
     try {
-      return await this.userToken.findUnique({
+      return await this.user.findUnique({
         where: {
           discordUUID: uuid,
         },
@@ -39,17 +39,25 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async insertUser(uuid: string) {
     try {
-      await this.userToken.create({
+      await this.user.create({
         data: {
           discordUUID: uuid,
+          Cake: {
+            create: { cake: 1000 },
+          },
         },
       });
 
-      return this.userToken.findUnique({
+      return await this.user.findUnique({
         where: {
           discordUUID: uuid,
         },
+        include: {
+          Cake: true,
+        },
       });
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

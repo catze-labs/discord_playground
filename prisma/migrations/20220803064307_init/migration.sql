@@ -1,0 +1,24 @@
+-- CreateTable
+CREATE TABLE `User` (
+    `idx` INTEGER NOT NULL AUTO_INCREMENT,
+    `discordUUID` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `UserToken_discordUUID_key`(`discordUUID`),
+    PRIMARY KEY (`idx`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Cake` (
+    `idx` INTEGER NOT NULL AUTO_INCREMENT,
+    `userIdx` INTEGER NOT NULL,
+    `cake` INTEGER NOT NULL DEFAULT 0,
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `Cake_userIdx_key`(`userIdx`),
+    PRIMARY KEY (`idx`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Cake` ADD CONSTRAINT `Cake_userIdx_fkey` FOREIGN KEY (`userIdx`) REFERENCES `User`(`idx`) ON DELETE RESTRICT ON UPDATE CASCADE;

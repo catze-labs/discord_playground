@@ -6,10 +6,8 @@ export class BotController {
   constructor(private prisma: PrismaService) {}
 
   @Get('/getUser')
-  async getUser(@Query('id') id: string) {
-    console.log('getUser Controller Called');
-    let idx: number = Number(id);
-    return await this.prisma.findUserByIdx(idx);
+  async getUser(@Query('idx') idx: string) {
+    return await this.prisma.findUserByIdx(Number(idx));
   }
 
   @Get('/getUserByUUID')
