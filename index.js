@@ -74,7 +74,7 @@ app.get("/", async ({ query }, res) => {
     }
   }
 
-  return res.sendFile("index.html", { root: "." });
+  return res.sendFile("discord-oauth-test.html", { root: "." });
 });
 
 app.listen(port, () => console.log(`Server Listening port ${port}`));
