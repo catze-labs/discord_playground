@@ -1,6 +1,6 @@
-const { Client, GatewayIntentBits, Message } = require("discord.js");
-const { tweet_api_bearer, token } = require("./setting_variable.json");
-var axios = require("axios");
+const { Client, GatewayIntentBits, Message } = require('discord.js');
+const { tweet_api_bearer, token } = require('./setting_variable.json');
+var axios = require('axios');
 
 const client = new Client({
   intents: [
@@ -12,31 +12,31 @@ const client = new Client({
   ],
 });
 
-client.once("ready", () => {
-  console.log("Ready!");
+client.once('ready', () => {
+  console.log('Ready!');
 });
 
 // 슬래시 명령
-client.on("interactionCreate", async (interaction) => {
+client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
   const { commandName, options } = interaction;
 
-  if (commandName === "ping") {
-    await interaction.reply("Pong!");
+  if (commandName === 'ping') {
+    await interaction.reply('Pong!');
   }
 
-  if (commandName === "tweet-give-coin") {
-    let tweetIds = options.get("link").value;
-    tweetIds = tweetIds.split("?")[0];
-    tweetIds = tweetIds.split("/");
+  if (commandName === 'tweet-give-coin') {
+    let tweetIds = options.get('link').value;
+    tweetIds = tweetIds.split('?')[0];
+    tweetIds = tweetIds.split('/');
     tweetIds = tweetIds[tweetIds.length - 1];
 
     try {
       var config = {
-        method: "get",
+        method: 'get',
         url: `https://api.twitter.com/2/tweets/${tweetIds}`,
         headers: {
-          "User-Agent": "v2TweetLookupJS",
+          'User-Agent': 'v2TweetLookupJS',
           authorization: `Bearer ${tweet_api_bearer}`,
         },
       };
@@ -44,25 +44,25 @@ client.on("interactionCreate", async (interaction) => {
       const tweetResult = await axios(config);
       const tweetResultData = tweetResult.data.data.text;
 
-      if (tweetResultData.indexOf("@CybergalzNFT") > -1) {
-        await interaction.reply("CyberGalz mentioned");
+      if (tweetResultData.indexOf('@CybergalzNFT') > -1) {
+        await interaction.reply('CyberGalz mentioned');
       } else {
-        await interaction.reply("This tweet not contain Cybergalz mention");
+        await interaction.reply('This tweet not contain Cybergalz mention');
       }
     } catch (e) {
       console.log(e);
-      console.log("Get Tweet Error");
-      await interaction.reply("Internal Server Error: Plz contact admin");
+      console.log('Get Tweet Error');
+      await interaction.reply('Internal Server Error: Plz contact admin');
     }
   }
 
-  if (commandName === "members") {
+  if (commandName === 'members') {
     const guildId = interaction.guildId;
 
     // 길드 멤버 리스트 가져오기
     let memberList = [];
     let maxMemberId = 0;
-    let result = "";
+    let result = '';
     const guild = client.guilds.cache.get(guildId);
     guild.members
       .list({
@@ -77,13 +77,13 @@ client.on("interactionCreate", async (interaction) => {
         interaction.reply(result);
       })
       .catch((err) => {
-        interaction.reply("member listup error");
+        interaction.reply('member listup error');
       });
   }
 
-  if (commandName === "roles") {
+  if (commandName === 'roles') {
     const guildId = interaction.guildId;
-    let result = "";
+    let result = '';
 
     const guild = client.guilds.cache.get(guildId);
     guild.roles
@@ -96,18 +96,18 @@ client.on("interactionCreate", async (interaction) => {
         interaction.reply(result);
       })
       .catch((err) => {
-        interaction.reply("role listup error");
+        interaction.reply('role listup error');
       });
   }
 });
 
 // 이미지 올렸는지 확인
-client.on("messageCreate", (msg) => {
+client.on('messageCreate', (msg) => {
   const attachmentsList = msg.attachments;
   let imgIsIncluded = false;
 
   attachmentsList.forEach((v) => {
-    if (v.contentType === "image/jpeg") {
+    if (v.contentType === 'image/jpeg') {
       imgIsIncluded = true;
     }
   });
@@ -115,7 +115,7 @@ client.on("messageCreate", (msg) => {
   if (imgIsIncluded) {
     // msg.reply("Img is included!");
     const channel = client.channels.cache.get(msg.channelId);
-    channel.send("Img is included");
+    channel.send('Img is included');
   }
 });
 
