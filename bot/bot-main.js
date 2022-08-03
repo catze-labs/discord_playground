@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, Message } = require('discord.js');
-const { tweet_api_bearer, token } = require('./setting_variable.json');
+const { tweet_api_bearer, token } = require('../setting_variable.json');
 var axios = require('axios');
 
 const client = new Client({
