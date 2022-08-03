@@ -36,3 +36,4 @@ lerna-debug.log*
 
 # env
 setting_variable.json
+.env*
