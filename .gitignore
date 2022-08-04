@@ -37,3 +37,6 @@ lerna-debug.log*
 # env
 setting_variable.json
 .env*
+
+#prisma migration files
+prisma/migrations

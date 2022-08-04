@@ -23,9 +23,9 @@ client.on('interactionCreate', async (interaction) => {
   // 인터랙션에서 명령어와 옵션 parameter 가져옴
   const { commandName, options } = interaction;
 
-  // demo - commands
+  // server 와의 시간 리턴
   if (commandName === 'ping') {
-    await interaction.reply('Pong!');
+    await interaction.reply('pong');
   }
 
   // 공식 계정 멘션된 트윗 할 경우
@@ -47,15 +47,16 @@ client.on('interactionCreate', async (interaction) => {
         },
       };
 
+      await interaction.deferReply();
       const tweetResult = await axios(config);
       const tweetResultData = tweetResult.data.data.text;
 
       // 텍스트에 @CybergalzNFT 가 존재하는가 판별
       if (tweetResultData.indexOf('@CybergalzNFT') > -1) {
-        await interaction.reply('CyberGalz mentioned');
+        await interaction.editReply('CyberGalz mentioned');
         // TODO : Server 와 통신
       } else {
-        await interaction.reply('This tweet not contain Cybergalz mention');
+        await interaction.editReply('This tweet not contain Cybergalz mention');
       }
     } catch (e) {
       // 에러처리
@@ -109,6 +110,52 @@ client.on('interactionCreate', async (interaction) => {
       .catch((err) => {
         interaction.reply('role listup error');
       });
+  }
+
+  if (commandName === 'rps') {
+    const randomRpsValue = Math.random() * (120 - 1) + 1;
+    let amount = null;
+    if (randomRpsValue < 40) {
+      amount = 100;
+    } else if (randomRpsValue > 40 && randomRpsValue <= 80) {
+      amount = -30;
+    } else {
+      amount = 0;
+    }
+
+    const drawString = `Draw! :p`;
+    const winString = `You Win!!! You earned 100 of cake!! :)`;
+    const loseString = `You Lose... You loss 30 of cake :(`;
+
+    const config = {
+      method: 'post',
+      url: 'http://localhost:8080/bot/changeCakeAmount',
+      data: {
+        uuid: interaction.member.id,
+        reason: 'RPS result',
+        amount: amount,
+      },
+    };
+    try {
+      await interaction.deferReply();
+      const changeCakeAmountResult = await axios(config);
+      const reqStatus = changeCakeAmountResult.status;
+
+      if (reqStatus == 201) {
+        if (amount > 0) {
+          await interaction.editReply(winString);
+        } else if (amount < 0) {
+          await interaction.editReply(loseString);
+        } else {
+          await interaction.editReply(drawString);
+        }
+      } else {
+        throw new Error('');
+      }
+    } catch (e) {
+      console.log(e);
+      await interaction.reply('Internal Server Error: Plz contact admin');
+    }
   }
 });
 

@@ -19,4 +19,13 @@ export class BotController {
   async newUser(@Body('uuid') uuid: string) {
     return await this.prisma.insertUser(uuid);
   }
+
+  @Post('/changeCakeAmount')
+  async changeCakeAmount(
+    @Body('uuid') uuid: string,
+    @Body('amount') amount: number,
+    @Body('reason') reason: string,
+  ) {
+    return await this.prisma.updateCakeToken(uuid, amount, reason);
+  }
 }
