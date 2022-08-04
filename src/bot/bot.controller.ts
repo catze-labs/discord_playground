@@ -1,5 +1,7 @@
 import { Controller, Get, Param, Query, Post, Body } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/dto/bot/createUser.dto';
+import { UpdateCakeAmountDto } from 'src/dto/bot/updateCakeAmount.dto';
 import { PrismaService } from 'src/prisma.service';
 
 @Controller('bot')
@@ -18,16 +20,13 @@ export class BotController {
   }
 
   @Post('/newUser')
-  async newUser(@Body('uuid') uuid: string) {
-    return await this.prisma.insertUser(uuid);
+  async newUser(@Body() createuserDto: CreateUserDto) {
+    return await this.prisma.insertUser(createuserDto);
   }
 
-  @Post('/changeCakeAmount')
-  async changeCakeAmount(
-    @Body('uuid') uuid: string,
-    @Body('amount') amount: number,
-    @Body('reason') reason: string,
-  ) {
-    return await this.prisma.updateCakeToken(uuid, amount, reason);
+  @Post('/updateCakeAmount')
+  async changeCakeAmount(@Body() updateCakeDto: UpdateCakeAmountDto) {
+    console.log(updateCakeDto);
+    return await this.prisma.updateCakeToken(updateCakeDto);
   }
 }

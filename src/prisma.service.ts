@@ -1,5 +1,7 @@
 import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { CreateUserDto } from './dto/bot/createUser.dto';
+import { UpdateCakeAmountDto } from './dto/bot/updateCakeAmount.dto';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -43,7 +45,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  async insertUser(uuid: string) {
+  async insertUser(createuserDto: CreateUserDto) {
+    const { uuid } = createuserDto;
     try {
       await this.user.create({
         data: {
@@ -73,7 +76,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  async updateCakeToken(uuid: string, amount: number, reason: string) {
+  async updateCakeToken(updateCakeDto: UpdateCakeAmountDto) {
+    const { uuid, amount, reason } = updateCakeDto;
+
     try {
       const user = await this.findUserByDiscordUUID(uuid);
 
