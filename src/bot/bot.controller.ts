@@ -1,7 +1,9 @@
 import { Controller, Get, Param, Query, Post, Body } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { PrismaService } from 'src/prisma.service';
 
 @Controller('bot')
+@ApiTags('For Discord Bot')
 export class BotController {
   constructor(private prisma: PrismaService) {}
 
