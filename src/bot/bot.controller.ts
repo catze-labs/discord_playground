@@ -3,30 +3,31 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/dto/bot/createUser.dto';
 import { UpdateCakeAmountDto } from 'src/dto/bot/updateCakeAmount.dto';
 import { PrismaService } from 'src/prisma.service';
+import { BotService } from './bot.service';
 
 @Controller('bot')
 @ApiTags('For Discord Bot')
 export class BotController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private botService: BotService) {}
 
   @Get('/getUser')
   async getUser(@Query('idx') idx: string) {
-    return await this.prisma.findUserByIdx(Number(idx));
+    return await this.botService.findUserByIdx(Number(idx));
   }
 
   @Get('/getUserByUUID')
   async getUserByUUID(@Query('uuid') uuid: string) {
-    return await this.prisma.findUserByDiscordUUID(uuid);
+    return await this.botService.findUserByUUID(uuid);
   }
 
   @Post('/newUser')
   async newUser(@Body() createuserDto: CreateUserDto) {
-    return await this.prisma.insertUser(createuserDto);
+    return await this.botService.createUser(createuserDto);
   }
 
   @Post('/updateCakeAmount')
   async changeCakeAmount(@Body() updateCakeDto: UpdateCakeAmountDto) {
     console.log(updateCakeDto);
-    return await this.prisma.updateCakeToken(updateCakeDto);
+    return await this.botService.updateCakeToken(updateCakeDto);
   }
 }
