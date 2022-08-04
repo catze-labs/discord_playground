@@ -27,10 +27,11 @@ client.on('interactionCreate', async (interaction) => {
   if (commandName === 'ping') {
     const startMill = new Date();
     let reqMill = null;
-    try {
-      // 봇 지연응답 으로 설정
-      await interaction.deferReply();
 
+    // 봇 지연응답 으로 설정
+    await interaction.deferReply();
+
+    try {
       // 서버에 리퀘
       const pongReuslt = await axios({
         method: 'get',
@@ -51,7 +52,7 @@ client.on('interactionCreate', async (interaction) => {
       );
     } catch (e) {
       console.log(e);
-      await interaction.reply('Internal Server Error. Plz Contact Admin.');
+      await interaction.editReply('Internal Server Error. Plz Contact Admin.');
     }
   }
 
