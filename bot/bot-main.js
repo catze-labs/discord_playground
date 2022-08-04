@@ -166,7 +166,7 @@ client.on('interactionCreate', async (interaction) => {
 
     const config = {
       method: 'post',
-      url: 'http://localhost:8080/bot/changeCakeAmount',
+      url: 'http://localhost:8080/bot/updateCakeAmount',
       data: {
         uuid: interaction.member.id,
         reason: 'RPS result',
@@ -175,8 +175,8 @@ client.on('interactionCreate', async (interaction) => {
     };
     try {
       await interaction.deferReply();
-      const changeCakeAmountResult = await axios(config);
-      const reqStatus = changeCakeAmountResult.status;
+      const updateCakeAmountResult = await axios(config);
+      const reqStatus = updateCakeAmountResult.status;
 
       if (reqStatus == 201) {
         if (amount > 0) {
