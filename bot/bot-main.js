@@ -25,7 +25,27 @@ client.on('interactionCreate', async (interaction) => {
 
   // server 와의 시간 리턴
   if (commandName === 'ping') {
-    await interaction.reply('pong');
+    const startMill = new Date();
+    let reqMill = null;
+    try {
+      await interaction.deferReply();
+      const pongReuslt = await axios({
+        method: 'get',
+        url: 'http://localhost:8080/ping',
+      });
+      const doneMill = new Date();
+
+      reqMill = new Date(pongReuslt.data);
+
+      await interaction.editReply(
+        `Server ⬆️ : ${reqMill - startMill}ms \nServer ⬇️ : ${
+          doneMill - reqMill
+        }ms\nTotal : ${doneMill - startMill}ms`,
+      );
+    } catch (e) {
+      console.log(e);
+      await interaction.reply('Internal Server Error. Plz Contact Admin.');
+    }
   }
 
   // 공식 계정 멘션된 트윗 할 경우
@@ -112,14 +132,23 @@ client.on('interactionCreate', async (interaction) => {
       });
   }
 
+  // 가위바위보
   if (commandName === 'rps') {
+    // 랜덤으로 숫자 지정
     const randomRpsValue = Math.random() * (120 - 1) + 1;
+
+    // 유저 케이크 토큰 변화량
     let amount = null;
+
+    // 숫자에 범위에 따라 W/L/D
     if (randomRpsValue < 40) {
+      // 유저 승리
       amount = 100;
     } else if (randomRpsValue > 40 && randomRpsValue <= 80) {
+      // 유저 패배
       amount = -30;
     } else {
+      // 비김
       amount = 0;
     }
 
