@@ -13,7 +13,7 @@ const commands = [
     .setDescription('Replies with pong!'),
 
   new SlashCommandBuilder()
-    .setName('tweet-give-coin')
+    .setName('tweetgalz')
     .addStringOption(
       new SlashCommandStringOption()
         .setName('link')

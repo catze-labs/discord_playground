@@ -28,15 +28,22 @@ client.on('interactionCreate', async (interaction) => {
     const startMill = new Date();
     let reqMill = null;
     try {
+      // 봇 지연응답 으로 설정
       await interaction.deferReply();
+
+      // 서버에 리퀘
       const pongReuslt = await axios({
         method: 'get',
         url: 'http://localhost:8080/ping',
       });
+
+      // 응답 끝난 시간
       const doneMill = new Date();
 
+      // 서버가 응답 받은 시간
       reqMill = new Date(pongReuslt.data);
 
+      // 유저에게 응답
       await interaction.editReply(
         `Server ⬆️ : ${reqMill - startMill}ms \nServer ⬇️ : ${
           doneMill - reqMill
@@ -49,7 +56,7 @@ client.on('interactionCreate', async (interaction) => {
   }
 
   // 공식 계정 멘션된 트윗 할 경우
-  if (commandName === 'tweet-give-coin') {
+  if (commandName === 'tweetgalz') {
     // 트윗 id 파싱
     let tweetIds = options.get('link').value;
     tweetIds = tweetIds.split('?')[0];
