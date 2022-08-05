@@ -122,6 +122,34 @@ module.exports = {
     },
   },
 
+  work: {
+    async exec(interaction) {
+      await interaction.deferReply();
+
+      const config = {
+        method: 'post',
+        url: 'http://localhost:8080/bot/updateCakeAmount',
+        data: {
+          amount: 100,
+          reason: 'WORK',
+          uuid: interaction.member.id,
+        },
+      };
+
+      try {
+        await axios(config);
+        await interaction.editReply('U Worked! Earned 100 Cake');
+      } catch (e) {
+        console.log(e);
+        const errorString = !e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message;
+
+        await interaction.editReply(`${errorString}`);
+      }
+    },
+  },
+
   tweetgalz: {
     async exec(interaction) {
       const { commandName, options } = interaction;

@@ -22,6 +22,8 @@ const commands = [
 
   new SlashCommandBuilder().setName('regist').setDescription('Regist Service'),
 
+  new SlashCommandBuilder().setName('work').setDescription('work!'),
+
   new SlashCommandBuilder()
     .setName('tweetgalz')
     .addStringOption(
