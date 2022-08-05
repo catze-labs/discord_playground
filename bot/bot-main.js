@@ -1,6 +1,7 @@
 const { Client, GatewayIntentBits, Message } = require('discord.js');
 const { tweet_api_bearer, token } = require('../setting_variable.json');
 var axios = require('axios');
+require('dotenv').config();
 
 const client = new Client({
   intents: [
@@ -71,7 +72,7 @@ client.on('interactionCreate', async (interaction) => {
         url: `https://api.twitter.com/2/tweets/${tweetIds}`,
         headers: {
           'User-Agent': 'v2TweetLookupJS',
-          authorization: `Bearer ${tweet_api_bearer}`,
+          authorization: `Bearer ${process.env.TWEET_API_BEARER}`,
         },
       };
 
@@ -235,4 +236,4 @@ client.on('guildMemberAdd', async (member) => {
   }
 });
 
-client.login(token);
+client.login(process.env.TOKEN);
