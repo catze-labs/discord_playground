@@ -23,7 +23,7 @@ jobs:
             cd discord_playground
             git fetch origin main
             git rebase FETCH_HEAD
-            git run build
+            npm run build
             cd bot
             node deploy-commands.js
             cd ..
