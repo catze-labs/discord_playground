@@ -18,7 +18,7 @@ jobs:
           username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
           script: |
-          cd discord_playground
+          cd /home/ubuntu/discord_playground
           git fetch origin main
           git rebase FETCH_HEAD
           npm run build
