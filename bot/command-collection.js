@@ -106,9 +106,9 @@ module.exports = {
         url: 'http://localhost:8080/bot/newUser',
         data: {
           uuid: interaction.user.id,
-          username: interaction.user.username,
+          discordUsername: interaction.user.username,
           discriminator: interaction.user.discriminator,
-          nickname: interaction.member.nickname,
+          guildNickname: interaction.member.nickname,
         },
       };
 

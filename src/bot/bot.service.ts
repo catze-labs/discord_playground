@@ -21,20 +21,18 @@ export class BotService {
   }
 
   async patchUser(patchUserDto: PatchUserDto) {
-    try {
-      const user = await this.prisma.findUserByDiscordUUID(
-        patchUserDto.oldUUID,
+    const user = await this.prisma.findUserByDiscordUUID(patchUserDto.oldUUID);
+
+    if (!user) {
+      throw new InternalServerErrorException(
+        `${patchUserDto.oldUUID} is not exist`,
       );
+    }
 
-      if (!user) {
-        throw new InternalServerErrorException(
-          `${patchUserDto.oldUUID} is not exist`,
-        );
-      }
-
+    try {
       await this.prisma.patchUser(patchUserDto);
     } catch (e) {
-      console.log(e);
+      throw new InternalServerErrorException(e);
     }
   }
 

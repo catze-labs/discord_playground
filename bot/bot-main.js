@@ -68,32 +68,35 @@ client.on('guildMemberAdd', async (member) => {
   }
 });
 
-client.on('guildMemberUpdate', async (oldMember, newMember) => {
+client.on('guildMemberUpdate', (oldMember, newMember) => {
   console.log(oldMember);
   console.log(newMember);
 
-  const oldUUID = oldMember.id;
-  const newUUID = newMember.id;
-
+  const oldUUID = oldMember.user.id;
+  const newUUID = newMember.user.id;
   const newNickname = newMember.nickname;
-  const newDiscriminator = newMember.discriminator;
+  const newDiscordUsername = newMember.user.username;
+  const newDiscriminator = newMember.user.discriminator;
 
-  try {
-    const config = {
-      method: 'patch',
-      url: 'http://localhost:8080/bot/patchUser',
-      data: {
-        oldUUID: oldUUID,
-        newUUID: newUUID,
-        nickname: newNickname,
-        discriminator: newDiscriminator,
-      },
-    };
+  const config = {
+    method: 'patch',
+    url: 'http://localhost:8080/bot/patchUser',
+    data: {
+      oldUUID: oldUUID,
+      newUUID: newUUID,
+      discordUsername: newDiscordUsername,
+      guildNickname: newNickname == null ? newDiscordUsername : newNickname,
+      discriminator: newDiscriminator,
+    },
+  };
 
-    await axios(config);
-  } catch (e) {
-    console.log(e);
-  }
+  axios(config)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err.response.data);
+    });
 });
 
 client.login(process.env.TOKEN);

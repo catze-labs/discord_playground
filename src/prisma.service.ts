@@ -87,7 +87,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async patchUser(patchUserDto: PatchUserDto) {
-    const { oldUUID, newUUID, nickname, discriminator } = patchUserDto;
+    const { oldUUID, newUUID, discordUsername, guildNickname, discriminator } =
+      patchUserDto;
 
     await this.user.update({
       where: {
@@ -95,7 +96,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       },
       data: {
         discordUUID: newUUID,
-        nickname,
+        discordUsername,
+        guildNickname,
         discriminator,
       },
     });
