@@ -134,22 +134,30 @@ module.exports = {
 
       await interaction.deferReply();
       try {
-        var config = {
+        const tweetResult = await axios({
           method: 'get',
           url: `https://api.twitter.com/2/tweets/${tweetIds}`,
           headers: {
             'User-Agent': 'v2TweetLookupJS',
             authorization: `Bearer ${process.env.TWEET_API_BEARER}`,
           },
-        };
-
-        const tweetResult = await axios(config);
+        });
         const tweetResultData = tweetResult.data.data.text;
 
         // 텍스트에 @CybergalzNFT 가 존재하는가 판별
         if (tweetResultData.indexOf('@CybergalzNFT') > -1) {
-          await interaction.editReply('CyberGalz mentioned');
           // TODO : Server 와 통신
+          await axios({
+            method: 'post',
+            url: 'http://localhost:8080/bot/updateCakeAmount',
+            data: {
+              amount: 100,
+              uuid: interaction.member.id,
+              reason: 'Tweet Cyber Galz!',
+            },
+          });
+
+          await interaction.editReply('Cyber Galz mentioned! U gain 100 Cake!');
         } else {
           await interaction.editReply(
             'This tweet not contain Cybergalz mention',
