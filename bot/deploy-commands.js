@@ -12,6 +12,14 @@ const commands = [
     .setName('ping')
     .setDescription('Replies with pong!'),
 
+  new SlashCommandBuilder()
+    .setName('website')
+    .setDescription('Get URL of CyberGalz'),
+
+  new SlashCommandBuilder()
+    .setName('rules')
+    .setDescription('Show CyberGalz Rules'),
+
   new SlashCommandBuilder().setName('regist').setDescription('Regist Service'),
 
   new SlashCommandBuilder()

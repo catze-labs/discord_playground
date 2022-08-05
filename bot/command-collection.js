@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { EmbedBuilder } = require('discord.js');
 require('dotenv').config();
 module.exports = {
   ping: {
@@ -34,6 +35,65 @@ module.exports = {
           'Internal Server Error. Plz Contact Admin.',
         );
       }
+    },
+  },
+
+  website: {
+    async exec(interaction) {
+      await interaction.reply('https://cybergalznft.com/');
+    },
+  },
+
+  rules: {
+    async exec(interaction) {
+      // await interaction.deferReply();
+      console.log('test');
+      const ruleEmbed = new EmbedBuilder()
+        .setColor('#FFD650')
+        .setTitle('Rules')
+        .setURL('https://cybergalznft.com/')
+        .setDescription('This is an embed for the server rules')
+        .addFields(
+          { name: 'Keep 🔊》general in English', value: 'Be nice' },
+          {
+            name: 'Be respectful',
+            value: 'Treat others like you want to be treated yourself',
+          },
+          { name: 'Be friendly', value: `Let's be positive always` },
+          {
+            name: 'Read the ❓》faq and 📢》announcement before asking questions',
+            value: 'Be nice',
+          },
+          {
+            name: 'Use the correct channels',
+            value: 'No one likes a disjointed conversation 😉',
+          },
+          {
+            name: `Be yourself. Don't impersonate moderators or admins`,
+            value: 'Be nice',
+          },
+          {
+            name: 'No NSFW content',
+            value: 'This will result in an instant ban',
+          },
+          {
+            name: 'No advertisements',
+            value: `Don't share information or sell anything not related to Cyber Galz in this server`,
+          },
+          {
+            name: 'Be wary of scams',
+            value: `the @Galz Team won't DM you first`,
+          },
+        )
+        .setImage(
+          'https://d1fdloi71mui9q.cloudfront.net/tVwOKL1uTvWxry5A4Gnj_W9QsYsa9rstZ43yg',
+        )
+        .setFooter({ text: 'Make sure to check out the rules channel' });
+
+      // interaction.member.roles.cache.has('993458489395531856')
+      await interaction.reply({
+        embeds: [ruleEmbed],
+      });
     },
   },
 
