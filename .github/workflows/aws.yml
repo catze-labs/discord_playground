@@ -27,5 +27,6 @@ jobs:
             pm2 kill
             node ./bot/deploy-commands.js
             pm2 start node ./dist/main.js
-            pm2 start node ./bot/bot-main.js
+            cd bot
+            pm2 start node bot-main.js
             whoami
