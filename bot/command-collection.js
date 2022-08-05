@@ -137,11 +137,49 @@ module.exports = {
 
         const result = await axios(config);
 
-        console.log(result.data);
-        await interaction.editReply('See Console');
+        const rank = result.data.map((v) => {
+          return {
+            name: `${v.User.guildNickname} #${v.User.discriminator}`,
+            value: `${v.cake} Cakes`,
+          };
+        });
+        console.log(rank);
+
+        const rankEmbed = new EmbedBuilder()
+          .setColor('#FFD650')
+          .setTitle('Cake Rank')
+          .setDescription('CyberGalz Discord Cake Rank Leaderboard')
+          .addFields(rank);
+
+        await interaction.editReply({
+          embeds: [rankEmbed],
+        });
       } catch (e) {
         console.log(e);
         await interaction.editReply('Interal Server Error');
+      }
+    },
+  },
+
+  'my-cake': {
+    async exec(interaction) {
+      await interaction.deferReply();
+
+      try {
+        const config = {
+          method: 'get',
+          url: `http://localhost:8080/bot/getMyCake?uuid=${interaction.user.id}`,
+        };
+
+        const result = await axios(config);
+        console.log(result.data);
+
+        await interaction.editReply(
+          `${interaction.member.nickname}'s Cake : ${result.data.cake} Cakes`,
+        );
+      } catch (e) {
+        console.log(e);
+        await interaction.editReply('Internal Server Error');
       }
     },
   },

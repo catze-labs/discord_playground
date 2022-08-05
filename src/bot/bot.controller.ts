@@ -49,4 +49,10 @@ export class BotController {
   async getCakeRank(@Query('skip') skip: number, @Query('take') take: number) {
     return await this.botService.getCakeRank(skip, take);
   }
+
+  @Get('/getMyCake')
+  async getMyCake(@Query('uuid') uuid: string) {
+    console.log(uuid);
+    return await this.botService.getMyCake(uuid);
+  }
 }

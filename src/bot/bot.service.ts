@@ -96,6 +96,11 @@ export class BotService {
     return await this.prisma.getCakeList(skip, take);
   }
 
+  async getMyCake(uuid: string) {
+    const user = await this.prisma.findUserByDiscordUUID(uuid);
+    return user.Cake;
+  }
+
   secondsToHMS(seconds: number) {
     return `${parseInt((seconds / 3600).toString())} h ${parseInt(
       ((seconds % 3600) / 60).toString(),

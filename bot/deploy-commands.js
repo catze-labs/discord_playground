@@ -23,6 +23,10 @@ const commands = [
   new SlashCommandBuilder().setName('regist').setDescription('Regist Service'),
 
   new SlashCommandBuilder()
+    .setName('my-cake')
+    .setDescription('Show User Cakes'),
+
+  new SlashCommandBuilder()
     .setName('leaderboard')
     .setDescription('Show Cake Leader Boards'),
 
