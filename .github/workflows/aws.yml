@@ -26,5 +26,4 @@ jobs:
             npm run build
             cd bot
             node deploy-commands.js
-            cd ..
             pm2 resatrt all
