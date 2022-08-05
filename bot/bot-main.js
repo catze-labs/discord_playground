@@ -55,7 +55,7 @@ client.on('guildMemberAdd', async (member) => {
   try {
     var config = {
       method: 'post',
-      url: `http://localhost:8080/bot/newUser`,
+      url: process.env.API_URL + '/bot/newUser',
       data: {
         uuid: member.id,
       },
@@ -80,7 +80,7 @@ client.on('guildMemberUpdate', (oldMember, newMember) => {
 
   const config = {
     method: 'patch',
-    url: 'http://localhost:8080/bot/patchUser',
+    url: process.env.API_URL + '/bot/patchUser',
     data: {
       oldUUID: oldUUID,
       newUUID: newUUID,
