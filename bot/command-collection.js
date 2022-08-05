@@ -14,7 +14,7 @@ module.exports = {
         // 서버에 리퀘
         const pongReuslt = await axios({
           method: 'get',
-          url: 'http://localhost:8080/ping',
+          url: process.env.API_URL + '/ping',
         });
 
         // 응답 끝난 시간
@@ -103,7 +103,7 @@ module.exports = {
 
       const config = {
         method: 'post',
-        url: 'http://localhost:8080/bot/newUser',
+        url: process.env.API_URL + '/bot/newUser',
         data: {
           uuid: interaction.user.id,
           discordUsername: interaction.user.username,
@@ -132,7 +132,7 @@ module.exports = {
       try {
         const config = {
           method: 'get',
-          url: 'http://localhost:8080/bot/getCakeRank?skip=0&take=10',
+          url: process.env.API_URL + '/bot/getCakeRank?skip=0&take=10',
         };
 
         const result = await axios(config);
@@ -189,7 +189,7 @@ module.exports = {
       await interaction.deferReply();
       const config = {
         method: 'post',
-        url: 'http://localhost:8080/bot/updateCakeAmount',
+        url: process.env.API_URL + '/bot/updateCakeAmount',
         data: {
           amount: 1000,
           reason: 'DAILY_REWARD',
@@ -217,7 +217,7 @@ module.exports = {
 
       const config = {
         method: 'post',
-        url: 'http://localhost:8080/bot/updateCakeAmount',
+        url: process.env.API_URL + '/bot/updateCakeAmount',
         data: {
           amount: 100,
           reason: 'WORK',
@@ -266,7 +266,7 @@ module.exports = {
           // TODO : Server 와 통신
           await axios({
             method: 'post',
-            url: 'http://localhost:8080/bot/updateCakeAmount',
+            url: process.env.API_URL + '/bot/updateCakeAmount',
             data: {
               amount: 100,
               uuid: interaction.user.id,
@@ -317,7 +317,7 @@ module.exports = {
       try {
         const config = {
           method: 'post',
-          url: 'http://localhost:8080/bot/updateCakeAmount',
+          url: process.env.API_URL + '/bot/updateCakeAmount',
           data: {
             uuid: interaction.user.id,
             reason: 'RPS',
