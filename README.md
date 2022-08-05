@@ -23,7 +23,7 @@ $ npm install
 ## Before Running
 
 - NestJS running not needs spcial .env files
-- For Running Discord Bot, You should make `setting_variable.json` and should set specific env variables.
+- For Running Discord Bot, You should make `.env` `project root`(For NestJS and Prisma) and `./bot`(For Discord Bot) for set specific env variables.
 
 ```bash
 # development
