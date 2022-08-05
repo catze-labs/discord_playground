@@ -40,3 +40,6 @@ setting_variable.json
 
 #prisma migration files
 prisma/migrations
+
+#pem
+*.pem
