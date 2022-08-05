@@ -6,6 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = 8080;
 
+  app.enableCors({ origin: '*' });
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Catze-CyberGalz-Discord Bot Server')
     .setDescription('Catze-CyberGalz-Discord Bot API Example')
