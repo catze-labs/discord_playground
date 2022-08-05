@@ -1,4 +1,9 @@
-import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  INestApplication,
+  Injectable,
+  InternalServerErrorException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { CreateUserDto } from './dto/bot/createUser.dto';
 import { UpdateCakeAmountDto } from './dto/bot/updateCakeAmount.dto';
@@ -76,14 +81,30 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  async updateCakeToken(updateCakeDto: UpdateCakeAmountDto) {
+  async getLastCakeUpdateHistory(uuid: string, reason: string) {
+    try {
+      const user = await this.findUserByDiscordUUID(uuid);
+      return await this.cakeUpdateHistory.findFirst({
+        where: {
+          reason: reason,
+          userIdx: user.idx,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async updateCake(updateCakeDto: UpdateCakeAmountDto) {
     const { uuid, amount, reason } = updateCakeDto;
 
     try {
       const user = await this.findUserByDiscordUUID(uuid);
 
       const newCakeAmount = user.Cake.cake + amount;
-
       await this.cake.update({
         where: { userIdx: user.idx },
         data: {

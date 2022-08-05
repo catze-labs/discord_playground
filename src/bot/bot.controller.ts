@@ -28,6 +28,6 @@ export class BotController {
   @Post('/updateCakeAmount')
   async changeCakeAmount(@Body() updateCakeDto: UpdateCakeAmountDto) {
     console.log(updateCakeDto);
-    return await this.botService.updateCakeToken(updateCakeDto);
+    return await this.botService.updateCake(updateCakeDto);
   }
 }

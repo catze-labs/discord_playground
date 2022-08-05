@@ -197,39 +197,36 @@ module.exports = {
       const loseString = `You Lose... You loss 30 of cake :(`;
 
       await interaction.deferReply();
-      if (amount != 0) {
-        try {
-          const config = {
-            method: 'post',
-            url: 'http://localhost:8080/bot/updateCakeAmount',
-            data: {
-              uuid: interaction.member.id,
-              reason: 'RPS result',
-              amount: amount,
-            },
-          };
-          const updateCakeAmountResult = await axios(config);
-          const reqStatus = updateCakeAmountResult.status;
+      try {
+        const config = {
+          method: 'post',
+          url: 'http://localhost:8080/bot/updateCakeAmount',
+          data: {
+            uuid: interaction.member.id,
+            reason: 'RPS',
+            amount: amount,
+          },
+        };
+        const updateCakeAmountResult = await axios(config);
+        const reqStatus = updateCakeAmountResult.status;
 
-          if (reqStatus == 201) {
-            if (amount > 0) {
-              await interaction.editReply(winString);
-            } else if (amount < 0) {
-              await interaction.editReply(loseString);
-            } else {
-              await interaction.editReply(drawString);
-            }
+        if (reqStatus == 201) {
+          if (amount > 0) {
+            await interaction.editReply(winString);
+          } else if (amount < 0) {
+            await interaction.editReply(loseString);
           } else {
-            throw new Error('');
+            await interaction.editReply(drawString);
           }
-        } catch (e) {
-          console.log(e);
-          await interaction.editReply(
-            'Internal Server Error: Plz contact admin',
-          );
+        } else {
+          throw new Error('');
         }
-      } else {
-        await interaction.editReply(drawString);
+      } catch (e) {
+        const errorString = !e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message;
+
+        await interaction.editReply(`${errorString}`);
       }
     },
   },
