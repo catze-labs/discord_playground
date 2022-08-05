@@ -17,13 +17,6 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
-          script: | 
-          cd /home/ubuntu/discord_playground
-          git fetch origin main
-          git rebase FETCH_HEAD
-          npm run build
-          cd bot
-          node deploy-commands.js
-          cd ..
-          pm2 reload all
-    
+          script: |
+            whoami
+            cd /home/ubuntu/discord_playground
