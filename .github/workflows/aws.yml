@@ -20,5 +20,11 @@ jobs:
           username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
           script: |
-            whoami
             cd discord_playground
+            git fetch origin main
+            git rebase FETCH_HEAD
+            git run build
+            cd bot
+            node deploy-commands.js
+            cd ..
+            pm2 resatrt all
