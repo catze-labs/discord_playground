@@ -2,6 +2,7 @@ const { Client, GatewayIntentBits, Message } = require('discord.js');
 var axios = require('axios');
 require('dotenv').config();
 const CommandColleciton = require('./command-collection');
+const { async } = require('rxjs');
 
 const client = new Client({
   intents: [
@@ -10,6 +11,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildWebhooks,
   ],
 });
 
@@ -63,6 +65,34 @@ client.on('guildMemberAdd', async (member) => {
     console.log(result.data);
   } catch (err) {
     console.log(err);
+  }
+});
+
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+  console.log(oldMember);
+  console.log(newMember);
+
+  const oldUUID = oldMember.id;
+  const newUUID = newMember.id;
+
+  const newNickname = newMember.nickname;
+  const newDiscriminator = newMember.discriminator;
+
+  try {
+    const config = {
+      method: 'patch',
+      url: 'http://localhost:8080/bot/patchUser',
+      data: {
+        oldUUID: oldUUID,
+        newUUID: newUUID,
+        nickname: newNickname,
+        discriminator: newDiscriminator,
+      },
+    };
+
+    await axios(config);
+  } catch (e) {
+    console.log(e);
   }
 });
 

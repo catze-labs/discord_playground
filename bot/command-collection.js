@@ -90,7 +90,7 @@ module.exports = {
         )
         .setFooter({ text: 'Make sure to check out the rules channel' });
 
-      // interaction.member.roles.cache.has('993458489395531856')
+      // interaction.user.roles.cache.has('993458489395531856')
       await interaction.reply({
         embeds: [ruleEmbed],
       });
@@ -105,7 +105,10 @@ module.exports = {
         method: 'post',
         url: 'http://localhost:8080/bot/newUser',
         data: {
-          uuid: interaction.member.id,
+          uuid: interaction.user.id,
+          username: interaction.user.username,
+          discriminator: interaction.user.discriminator,
+          nickname: interaction.member.nickname,
         },
       };
 
@@ -122,6 +125,54 @@ module.exports = {
     },
   },
 
+  leaderboard: {
+    async exec(interaction) {
+      await interaction.deferReply();
+
+      try {
+        const config = {
+          method: 'get',
+          url: 'http://localhost:8080/bot/getCakeRank?skip=0&take=10',
+        };
+
+        const result = await axios(config);
+
+        console.log(result.data);
+        await interaction.editReply('See Console');
+      } catch (e) {
+        console.log(e);
+        await interaction.editReply('Interal Server Error');
+      }
+    },
+  },
+
+  'daily-reward': {
+    async exec(interaction) {
+      await interaction.deferReply();
+      const config = {
+        method: 'post',
+        url: 'http://localhost:8080/bot/updateCakeAmount',
+        data: {
+          amount: 1000,
+          reason: 'DAILY_REWARD',
+          uuid: interaction.user.id,
+        },
+      };
+
+      try {
+        await axios(config);
+        await interaction.editReply('U Daily Checked!! Earned 1000 Cake');
+      } catch (e) {
+        console.log(e);
+        const errorString = !e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message;
+
+        await interaction.editReply(`${errorString}`);
+      }
+    },
+  },
+
   work: {
     async exec(interaction) {
       await interaction.deferReply();
@@ -132,7 +183,7 @@ module.exports = {
         data: {
           amount: 100,
           reason: 'WORK',
-          uuid: interaction.member.id,
+          uuid: interaction.user.id,
         },
       };
 
@@ -180,7 +231,7 @@ module.exports = {
             url: 'http://localhost:8080/bot/updateCakeAmount',
             data: {
               amount: 100,
-              uuid: interaction.member.id,
+              uuid: interaction.user.id,
               reason: 'Tweet Cyber Galz!',
             },
           });
@@ -230,7 +281,7 @@ module.exports = {
           method: 'post',
           url: 'http://localhost:8080/bot/updateCakeAmount',
           data: {
-            uuid: interaction.member.id,
+            uuid: interaction.user.id,
             reason: 'RPS',
             amount: amount,
           },

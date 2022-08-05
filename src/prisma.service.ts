@@ -4,8 +4,9 @@ import {
   InternalServerErrorException,
   OnModuleInit,
 } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Cake, PrismaClient } from '@prisma/client';
 import { CreateUserDto } from './dto/bot/createUser.dto';
+import { PatchUserDto } from './dto/bot/patchUser.dto';
 import { UpdateCakeAmountDto } from './dto/bot/updateCakeAmount.dto';
 
 @Injectable()
@@ -51,11 +52,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async insertUser(createuserDto: CreateUserDto) {
-    const { uuid } = createuserDto;
+    const { uuid, discordUsername, guildNickname, discriminator } =
+      createuserDto;
     try {
       await this.user.create({
         data: {
           discordUUID: uuid,
+          discordUsername,
+          discriminator,
+          guildNickname,
           Cake: {
             create: { cake: 0 },
           },
@@ -78,6 +83,43 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       });
     } catch (e) {
       console.log(e);
+    }
+  }
+
+  async patchUser(patchUserDto: PatchUserDto) {
+    const { oldUUID, newUUID, nickname, discriminator } = patchUserDto;
+
+    await this.user.update({
+      where: {
+        discordUUID: oldUUID,
+      },
+      data: {
+        discordUUID: newUUID,
+        nickname,
+        discriminator,
+      },
+    });
+  }
+
+  async getCakeList(skip: number = 0, take: number = 10) {
+    try {
+      const cakeList: Cake[] = await this.cake.findMany({
+        orderBy: {
+          cake: 'desc',
+        },
+        include: {
+          User: true,
+        },
+        skip: Number(skip),
+        take: Number(take),
+      });
+
+      console.log(cakeList);
+
+      return cakeList;
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException();
     }
   }
 

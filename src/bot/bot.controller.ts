@@ -1,6 +1,15 @@
-import { Controller, Get, Param, Query, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Post,
+  Body,
+  Patch,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/dto/bot/createUser.dto';
+import { PatchUserDto } from 'src/dto/bot/patchUser.dto';
 import { UpdateCakeAmountDto } from 'src/dto/bot/updateCakeAmount.dto';
 import { PrismaService } from 'src/prisma.service';
 import { BotService } from './bot.service';
@@ -21,13 +30,23 @@ export class BotController {
   }
 
   @Post('/newUser')
-  async newUser(@Body() createuserDto: CreateUserDto) {
-    return await this.botService.createUser(createuserDto);
+  async newUser(@Body() createUserDto: CreateUserDto) {
+    return await this.botService.createUser(createUserDto);
+  }
+
+  @Patch('/patchUser')
+  async patchUser(@Body() patchUserDto: PatchUserDto) {
+    return await this.botService.patchUser(patchUserDto);
   }
 
   @Post('/updateCakeAmount')
   async changeCakeAmount(@Body() updateCakeDto: UpdateCakeAmountDto) {
     console.log(updateCakeDto);
     return await this.botService.updateCake(updateCakeDto);
+  }
+
+  @Get('/getCakeRank')
+  async getCakeRank(@Query('skip') skip: number, @Query('take') take: number) {
+    return await this.botService.getCakeRank(skip, take);
   }
 }

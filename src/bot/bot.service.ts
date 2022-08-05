@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from 'src/dto/bot/createUser.dto';
+import { PatchUserDto } from 'src/dto/bot/patchUser.dto';
 import { UpdateCakeAmountDto } from 'src/dto/bot/updateCakeAmount.dto';
 import { PrismaService } from 'src/prisma.service';
 
@@ -19,6 +20,24 @@ export class BotService {
     return await this.prisma.insertUser(createUserDto);
   }
 
+  async patchUser(patchUserDto: PatchUserDto) {
+    try {
+      const user = await this.prisma.findUserByDiscordUUID(
+        patchUserDto.oldUUID,
+      );
+
+      if (!user) {
+        throw new InternalServerErrorException(
+          `${patchUserDto.oldUUID} is not exist`,
+        );
+      }
+
+      await this.prisma.patchUser(patchUserDto);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async updateCake(updateCakeAmountDto: UpdateCakeAmountDto) {
     const { uuid, reason } = updateCakeAmountDto;
 
@@ -28,7 +47,8 @@ export class BotService {
       RPS: 15,
       COIN: 15,
       ROULETTE: 15,
-      WORK: 1440,
+      WORK: 60,
+      DAILY_REWARD: 1440,
     };
 
     // 케이크 업데이트에 시간 주기 제한이 걸려있다면
@@ -39,32 +59,43 @@ export class BotService {
         reason,
       );
 
-      // 현재시간
-      let now = new Date();
-      // 마지막 기록의 시간 + 업데이트 이유마다 정해진 시간
-      let lastCakeUpdateHistoryDate = new Date(
-        lastCakeUpdateHistory.createdAt.setMinutes(
-          lastCakeUpdateHistory.createdAt.getMinutes() +
-            reasonPeriodicTimeObj[reason],
-        ),
-      );
+      // 기록이 존재 할 때
+      if (lastCakeUpdateHistory) {
+        // 현재시간
+        let now = new Date();
+        // 마지막 기록의 시간 + 업데이트 이유마다 정해진 시간
+        let lastCakeUpdateHistoryDate = new Date(
+          lastCakeUpdateHistory.createdAt.setMinutes(
+            lastCakeUpdateHistory.createdAt.getMinutes() +
+              reasonPeriodicTimeObj[reason],
+          ),
+        );
 
-      // 마지막 기록시간 + 주기시간이 지났다면
-      if (now > lastCakeUpdateHistoryDate) {
-        // 업데이트
-        await this.prisma.updateCake(updateCakeAmountDto);
+        // 마지막 기록시간 + 주기시간이 지났다면
+        if (now > lastCakeUpdateHistoryDate) {
+          // 업데이트
+          await this.prisma.updateCake(updateCakeAmountDto);
+        } else {
+          // 지나지 않았다면 남은 시간 초로 반환
+          let remainTime =
+            (lastCakeUpdateHistoryDate.getTime() - now.getTime()) / 1000;
+
+          let informationString =
+            'Plz wait for ' + this.secondsToHMS(remainTime);
+
+          throw new InternalServerErrorException(informationString);
+        }
       } else {
-        // 지나지 않았다면 남은 시간 초로 반환
-        let remainTime =
-          (lastCakeUpdateHistoryDate.getTime() - now.getTime()) / 1000;
-
-        let informationString = 'Plz wait for ' + this.secondsToHMS(remainTime);
-
-        throw new InternalServerErrorException(informationString);
+        // 존재하지 않을 때
+        await this.prisma.updateCake(updateCakeAmountDto);
       }
     } else {
       await this.prisma.updateCake(updateCakeAmountDto);
     }
+  }
+
+  async getCakeRank(skip: number, take: number) {
+    return await this.prisma.getCakeList(skip, take);
   }
 
   secondsToHMS(seconds: number) {

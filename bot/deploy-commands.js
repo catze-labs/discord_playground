@@ -22,6 +22,14 @@ const commands = [
 
   new SlashCommandBuilder().setName('regist').setDescription('Regist Service'),
 
+  new SlashCommandBuilder()
+    .setName('leaderboard')
+    .setDescription('Show Cake Leader Boards'),
+
+  new SlashCommandBuilder()
+    .setName('daily-reward')
+    .setDescription('Get Daily Reward Cake Token'),
+
   new SlashCommandBuilder().setName('work').setDescription('work!'),
 
   new SlashCommandBuilder()
