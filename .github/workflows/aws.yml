@@ -24,6 +24,7 @@ jobs:
             git fetch origin main
             git rebase FETCH_HEAD
             npm run build
-            cd bot
-            node deploy-commands.js
-            pm2 restart all
+            pm2 kill
+            node ./bot/deploy-commands.js
+            pm2 start node ./dist/main.js
+            pm2 start node ./bot/bot-main.js
