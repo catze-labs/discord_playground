@@ -13,7 +13,7 @@ jobs:
       - name: Run Script in Server
         uses: appleboy/ssh-action@master
         with:
-          password: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
