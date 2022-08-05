@@ -21,45 +21,55 @@ export class BotService {
 
   async updateCake(updateCakeAmountDto: UpdateCakeAmountDto) {
     const { uuid, reason } = updateCakeAmountDto;
-    const games = ['DICE', 'RPS', 'COIN', 'ROULETTE'];
 
-    // 케이크 업데이트가 게임에 의한 것이라면
-    if (games.indexOf(reason) > -1) {
-      // 마지막으로 같은 게임의 히스토리 가져옴
+    // 주기 시간 (단위 : 분)
+    const reasonPeriodicTimeObj = {
+      DICE: 15,
+      RPS: 15,
+      COIN: 15,
+      ROULETTE: 15,
+      WORK: 1440,
+    };
+
+    // 케이크 업데이트에 시간 주기 제한이 걸려있다면
+    if (reasonPeriodicTimeObj[reason]) {
+      // 마지막으로 실행됬던 같은 이유의 히스토리 가져옴
       const lastCakeUpdateHistory = await this.prisma.getLastCakeUpdateHistory(
         uuid,
         reason,
       );
 
-      // 마지막 기록의 시간 + 15분
+      // 현재시간
+      let now = new Date();
+      // 마지막 기록의 시간 + 업데이트 이유마다 정해진 시간
       let lastCakeUpdateHistoryDate = new Date(
         lastCakeUpdateHistory.createdAt.setMinutes(
-          lastCakeUpdateHistory.createdAt.getMinutes() + 15,
+          lastCakeUpdateHistory.createdAt.getMinutes() +
+            reasonPeriodicTimeObj[reason],
         ),
       );
 
-      // 현재시간
-      let now = new Date();
-
-      console.log(lastCakeUpdateHistoryDate);
-      console.log(now);
-
-      // 마지막 기록시간 + 15 분이 지났다면
+      // 마지막 기록시간 + 주기시간이 지났다면
       if (now > lastCakeUpdateHistoryDate) {
         // 업데이트
         await this.prisma.updateCake(updateCakeAmountDto);
       } else {
         // 지나지 않았다면 남은 시간 초로 반환
-        const remainTime =
+        let remainTime =
           (lastCakeUpdateHistoryDate.getTime() - now.getTime()) / 1000;
-        throw new InternalServerErrorException(
-          `Plz wait for ${(remainTime / 60).toFixed(0)} min ${(
-            remainTime % 60
-          ).toFixed(0)} sec.`,
-        );
+
+        let informationString = 'Plz wait for ' + this.secondsToHMS(remainTime);
+
+        throw new InternalServerErrorException(informationString);
       }
     } else {
       await this.prisma.updateCake(updateCakeAmountDto);
     }
+  }
+
+  secondsToHMS(seconds: number) {
+    return `${parseInt((seconds / 3600).toString())} h ${parseInt(
+      ((seconds % 3600) / 60).toString(),
+    )} m ${parseInt((seconds % 60).toString())} s`;
   }
 }
