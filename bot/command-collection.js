@@ -172,10 +172,13 @@ module.exports = {
         };
 
         const result = await axios(config);
-        console.log(result.data);
 
+        const nickname =
+          interaction.member.nickname == null
+            ? interaction.user.username
+            : interaction.member.nickname;
         await interaction.editReply(
-          `${interaction.member.nickname}'s Cake : ${result.data.cake} Cakes`,
+          `${nickname}'s Cake : ${result.data.cake} Cakes`,
         );
       } catch (e) {
         console.log(e);
