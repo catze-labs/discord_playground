@@ -12,6 +12,8 @@ const commands = [
     .setName('ping')
     .setDescription('Replies with pong!'),
 
+  new SlashCommandBuilder().setName('regist').setDescription('Regist Service'),
+
   new SlashCommandBuilder()
     .setName('tweetgalz')
     .addStringOption(
