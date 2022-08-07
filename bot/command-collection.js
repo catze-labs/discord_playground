@@ -108,7 +108,10 @@ module.exports = {
           uuid: interaction.user.id,
           discordUsername: interaction.user.username,
           discriminator: interaction.user.discriminator,
-          guildNickname: interaction.member.nickname,
+          guildNickname:
+            interaction.member.nickname == null
+              ? interaction.user.username
+              : interaction.member.nickname,
         },
       };
 
