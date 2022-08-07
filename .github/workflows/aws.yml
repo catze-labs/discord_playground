@@ -2,12 +2,8 @@ name : deploy
 
 on:
   push:
+    paths-ignore: [ '*.md', '.gitignore', '.eslintrc', '.prettierrc' ]
     branches: [main]
-    path-ignore:
-      - '**/**.md'
-      - '**/.eslintrc'
-      - '**/.gitignore'
-      - '**/.prettierrc'
 
 jobs:
   AUTO_DEPLOY:
