@@ -4,10 +4,10 @@ on:
   push:
     branches: [main]
     path-ignore:
-      - '**.md'
-      - '**.eslintrc'
-      - '**.gitignore'
-      - '**.prettierrc'
+      - '**/**.md'
+      - '**/.eslintrc'
+      - '**/.gitignore'
+      - '**/.prettierrc'
 
 jobs:
   AUTO_DEPLOY:
