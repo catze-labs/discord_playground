@@ -68,4 +68,5 @@ Email to `phantola@cybergalznft.com`
 
 ## Other Info
 
-- npx prisma migrate dev --name "init" => DB 엔티티 초기화
+- npx prisma migrate dev --name "init" => DB Table initialization. (roll back and re-generate tables)
+- according to `.github/workflows/aws.yml`, `.md`, `.gitignore`, `.eslintrc`, `.prettierrc` files not affect to github action.
