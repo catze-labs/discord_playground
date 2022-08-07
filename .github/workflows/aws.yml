@@ -5,9 +5,9 @@ on:
     branches: [main]
     path-ignore:
       - '**.md'
-      - '.eslintrc'
-      - '.gitignore'
-      - '.prettierrc'
+      - '**.eslintrc'
+      - '**.gitignore'
+      - '**.prettierrc'
 
 jobs:
   AUTO_DEPLOY:
