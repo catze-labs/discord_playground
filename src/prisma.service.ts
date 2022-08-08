@@ -57,23 +57,25 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     const { uuid, discordUsername, guildNickname, discriminator } =
       createuserDto;
     try {
-      const newUser = await this.user.create({
-        data: {
-          discordUUID: uuid,
-          discordUsername,
-          discriminator,
-          guildNickname,
-          Cake: {
-            create: { cake: 0 },
-          },
-          CakeUpdateHistory: {
-            create: {
-              changeAmount: 0,
-              reason: 'New User',
+      const [newUser] = await this.$transaction([
+        this.user.create({
+          data: {
+            discordUUID: uuid,
+            discordUsername,
+            discriminator,
+            guildNickname,
+            Cake: {
+              create: { cake: 0 },
+            },
+            CakeUpdateHistory: {
+              create: {
+                changeAmount: 0,
+                reason: 'New User',
+              },
             },
           },
-        },
-      });
+        })
+      ]);
 
       return await this.user.findUnique({
         where: {
@@ -93,17 +95,19 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     const { oldUUID, newUUID, discordUsername, guildNickname, discriminator } =
       patchUserDto;
 
-    await this.user.update({
-      where: {
-        discordUUID: oldUUID,
-      },
-      data: {
-        discordUUID: newUUID,
-        discordUsername,
-        guildNickname,
-        discriminator,
-      },
-    });
+    await this.$transaction([
+      this.user.update({
+        where: {
+          discordUUID: oldUUID,
+        },
+        data: {
+          discordUUID: newUUID,
+          discordUsername,
+          guildNickname,
+          discriminator,
+        },
+      })
+    ])
   }
 
   async getCakeList(skip: number = 0, take: number = 10) {
