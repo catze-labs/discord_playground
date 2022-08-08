@@ -270,7 +270,7 @@ module.exports = {
         // 텍스트에 @CybergalzNFT 가 존재하는가 판별
         if (tweetResultData.indexOf('@CybergalzNFT') > -1) {
           // TODO : Server 와 통신
-          await axios({
+          const result = await axios({
             method: 'post',
             url: process.env.API_URL + '/bot/updateCake',
             data: {
@@ -280,7 +280,26 @@ module.exports = {
             },
           });
 
-          await interaction.editReply('Cyber Galz mentioned! U gain 100 Cake!');
+          const transactionIdList = result.data.transaction_id_list.map(v => '#' + v)
+          const resultEmbed = new EmbedBuilder()
+          .setColor('#FFD650')
+          .setTitle('Tweet @CybergalzNFT')
+          .setDescription(`Transaction ${transactionIdList.join(', ')} : twitter mentioned @CybergalzNFT`)
+          .addFields(
+            { name: 'Beneficiary', value: interaction.user.id },
+            {
+              name: 'Amount',
+              value: 100 + '',
+            },
+            {
+              name: 'Transaction Approved Date',
+              value: new Date().toString(),
+            },
+          )
+
+          await interaction.editReply({
+            embeds : [resultEmbed]
+          });
         } else {
           await interaction.editReply(
             'This tweet not contain Cybergalz mention',
