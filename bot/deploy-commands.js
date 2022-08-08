@@ -73,7 +73,7 @@ const commands = [
   )
   .addNumberOption(
     new SlashCommandNumberOption()
-    .setName('test2')
+    .setName('amount')
     .setDescription('send amount of cake')
     .setRequired(true)
   )

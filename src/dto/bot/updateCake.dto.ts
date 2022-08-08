@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class UpdateCakeAmountDto {
+export class UpdateCakeDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ description: 'Discord User UUID' })

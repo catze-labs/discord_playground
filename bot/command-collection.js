@@ -195,7 +195,7 @@ module.exports = {
       await interaction.deferReply();
       const config = {
         method: 'post',
-        url: process.env.API_URL + '/bot/updateCakeAmount',
+        url: process.env.API_URL + '/bot/updateCake',
         data: {
           amount: 1000,
           reason: 'DAILY_REWARD',
@@ -223,7 +223,7 @@ module.exports = {
 
       const config = {
         method: 'post',
-        url: process.env.API_URL + '/bot/updateCakeAmount',
+        url: process.env.API_URL + '/bot/updateCake',
         data: {
           amount: 100,
           reason: 'WORK',
@@ -272,7 +272,7 @@ module.exports = {
           // TODO : Server 와 통신
           await axios({
             method: 'post',
-            url: process.env.API_URL + '/bot/updateCakeAmount',
+            url: process.env.API_URL + '/bot/updateCake',
             data: {
               amount: 100,
               uuid: interaction.user.id,
@@ -323,7 +323,7 @@ module.exports = {
       try {
         const config = {
           method: 'post',
-          url: process.env.API_URL + '/bot/updateCakeAmount',
+          url: process.env.API_URL + '/bot/updateCake',
           data: {
             uuid: interaction.user.id,
             reason: 'RPS',
@@ -365,7 +365,7 @@ module.exports = {
       try {
         const config = {
           method: 'post',
-          url: process.env.API_URL + '/bot/updateCakeAmount',
+          url: process.env.API_URL + '/bot/updateCake',
           data: {
             uuid: msg.author.id,
             reason: 'OOTD_UPLOAD',
@@ -383,17 +383,97 @@ module.exports = {
   },
 
   send : {
-    exec(interaction) {
-      interaction.reply('send')
+    async exec(interaction) {
+
+      await interaction.deferReply();
+
+      const options = interaction.options;
+      const sender = interaction.user.id
+      const receiver = options.get('receiver').member.user.id;
+      const amount = options.get('amount').value
+
+      try {
+        const config = {
+          method: 'post',
+          url: process.env.API_URL + '/bot/sendCake',
+          data: {
+            sender,
+            receiver,
+            amount
+          },
+        }
+        await axios(config);
+
+        await interaction.editReply('Send Cake Success')
+      } catch(e) {
+        await interaction.editReply(!e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message)
+      }
+
     }
   },
 
   give : {
+    async exec(interaction) {
+      await interaction.deferReply();
 
+      // 권한
+
+      const options = interaction.options
+      const receiver = options.get('receiver').member.user.id;
+      const amount = options.get('amount').value
+      const reason = optoins.get('reason').value
+
+      try {
+        const config = {
+          method: 'post',
+          url: process.env.API_URL + '/bot/updateCake',
+          data: {
+            uuid: receiver,
+            reason: `GIVE ${reason}`,
+            amount: amount,
+          },
+        }
+        await axios(config);
+      } catch (e) {
+        console.log(e)
+        await interaction.editReply(!e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message)
+      }
+    }
   },
 
   take : {
-    
+    async exec(interaction) {
+      await interaction.deferReply();
+
+      // 권한
+      
+      const options = interaction.options
+      const receiver = options.get('receiver').member.user.id;
+      const amount = options.get('amount').value
+      const reason = options.get('reason').value
+
+      try {
+        const config = {
+          method: 'post',
+          url: process.env.API_URL + '/bot/updateCake',
+          data: {
+            uuid: receiver,
+            reason: `TAKE ${reason}`,
+            amount: -amount,
+          },
+        }
+        await axios(config);
+      } catch (e) {
+        console.log(e)
+        await interaction.editReply(!e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message)
+      }
+    }
   },
 
   member: {

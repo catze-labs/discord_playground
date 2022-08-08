@@ -4,10 +4,11 @@ import {
   InternalServerErrorException,
   OnModuleInit,
 } from '@nestjs/common';
-import { Cake, PrismaClient } from '@prisma/client';
+import { Cake, PrismaClient, User } from '@prisma/client';
 import { CreateUserDto } from './dto/bot/createUser.dto';
 import { PatchUserDto } from './dto/bot/patchUser.dto';
-import { UpdateCakeAmountDto } from './dto/bot/updateCakeAmount.dto';
+import { SendCakeDto } from './dto/bot/SendCake.dto';
+import { UpdateCakeDto } from './dto/bot/updateCake.dto';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -142,29 +143,93 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  async updateCake(updateCakeDto: UpdateCakeAmountDto) {
-    const { uuid, amount, reason } = updateCakeDto;
+  async updateCake(updateCakeDto: UpdateCakeDto) {
+    const { uuid, reason, amount } = updateCakeDto;
 
     try {
       const user = await this.findUserByDiscordUUID(uuid);
 
-      const newCakeAmount = user.Cake.cake + amount;
-      await this.cake.update({
-        where: { userIdx: user.idx },
-        data: {
-          cake: newCakeAmount,
-        },
-      });
+      // 변경 후 값이 음수라면 있던 케이크 모두 0 으로 만듦.
+      if(amount + user.Cake.cake < 0) {
+        await this.$transaction([
+          this.cake.update({
+            where: { userIdx: user.idx },
+            data: {
+              cake: 0,
+            },
+          }),
+          this.cakeUpdateHistory.create({
+            data: {
+              userIdx: user.idx,
+              changeAmount: -user.Cake.cake,
+              reason,
+            },
+          })
 
-      await this.cakeUpdateHistory.create({
-        data: {
-          userIdx: user.idx,
-          changeAmount: amount,
-          reason,
-        },
-      });
+        ])
+      } else {
+        // 잔액이 양수로 남는다면 정상처리
+        const newCakeAmount = user.Cake.cake + amount;
+
+        await this.$transaction([
+          this.cake.update({
+            where: { userIdx: user.idx },
+            data: {
+              cake: newCakeAmount,
+            },
+          }),
+          this.cakeUpdateHistory.create({
+            data: {
+              userIdx: user.idx,
+              changeAmount: amount,
+              reason,
+            },
+          })
+        ])
+      }
     } catch (e) {
-      console.log(e);
+      throw 'Transaction Failed'
     }
+  }
+
+  async sendCake(sendCakeDto : SendCakeDto) {
+
+    const sendUser = await this.findUserByDiscordUUID(sendCakeDto.sender);
+    const receiverUser = await this.findUserByDiscordUUID(sendCakeDto.receiver);
+
+    if(!sendUser || !receiverUser) {
+      throw 'User is not exist'
+    }
+
+    // 보내는 사람의 케이크가 보내려는 케이크 수량보다 큰 경우 (정상처리)
+    if(sendUser.Cake.cake >= sendCakeDto.amount) {
+      const sendUserCake : number = sendUser.Cake.cake - sendCakeDto.amount;
+      const receiverUserCake : number = receiverUser.Cake.cake + sendCakeDto.amount;
+  
+      try {
+        await this.$transaction([
+          this.cake.update({where : {userIdx : sendUser.idx}, data : { cake : sendUserCake}}),
+          this.cake.update({where : {userIdx : receiverUser.idx}, data : {cake : receiverUserCake}}),
+          this.cakeUpdateHistory.createMany({
+            data : [
+              {
+                userIdx : sendUser.idx,
+                changeAmount : -sendCakeDto.amount,
+                reason : 'SEND'
+              },{
+                userIdx : receiverUser.idx,
+                changeAmount : sendCakeDto.amount,
+                reason : 'RECEIVE'
+              },
+            ]
+          })
+        ])
+      } catch(e) {
+        throw 'Transaction Failed'
+      }
+    } else {
+      // 보내는 사람 케이크가 보내려는 수량보다 작은 경우
+      throw 'Your cake is not enough to send'
+    } 
   }
 }

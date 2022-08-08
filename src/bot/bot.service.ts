@@ -1,7 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from 'src/dto/bot/createUser.dto';
 import { PatchUserDto } from 'src/dto/bot/patchUser.dto';
-import { UpdateCakeAmountDto } from 'src/dto/bot/updateCakeAmount.dto';
+import { SendCakeDto } from 'src/dto/bot/SendCake.dto';
+import { UpdateCakeDto } from 'src/dto/bot/updateCake.dto';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -36,7 +37,7 @@ export class BotService {
     }
   }
 
-  async updateCake(updateCakeAmountDto: UpdateCakeAmountDto) {
+  async updateCake(updateCakeAmountDto: UpdateCakeDto) {
     const { uuid, reason } = updateCakeAmountDto;
 
     // 주기 시간 (단위 : 분)
@@ -100,6 +101,14 @@ export class BotService {
   async getMyCake(uuid: string) {
     const user = await this.prisma.findUserByDiscordUUID(uuid);
     return user.Cake;
+  }
+
+  async sendCake(sendCakeDto : SendCakeDto) {
+    try {
+      await this.prisma.sendCake(sendCakeDto)
+    } catch (e) {
+      throw new InternalServerErrorException(e)
+    }
   }
 
   secondsToHMS(seconds: number) {

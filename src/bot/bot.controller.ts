@@ -10,7 +10,8 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/dto/bot/createUser.dto';
 import { PatchUserDto } from 'src/dto/bot/patchUser.dto';
-import { UpdateCakeAmountDto } from 'src/dto/bot/updateCakeAmount.dto';
+import { SendCakeDto } from 'src/dto/bot/SendCake.dto';
+import { UpdateCakeDto } from 'src/dto/bot/updateCake.dto';
 import { PrismaService } from 'src/prisma.service';
 import { BotService } from './bot.service';
 
@@ -18,6 +19,12 @@ import { BotService } from './bot.service';
 @ApiTags('For Discord Bot')
 export class BotController {
   constructor(private prisma: PrismaService, private botService: BotService) {}
+
+
+  @Post('/newUser')
+  async newUser(@Body() createUserDto: CreateUserDto) {
+    return await this.botService.createUser(createUserDto);
+  }
 
   @Get('/getUser')
   async getUser(@Query('idx') idx: string) {
@@ -29,20 +36,10 @@ export class BotController {
     return await this.botService.findUserByUUID(uuid);
   }
 
-  @Post('/newUser')
-  async newUser(@Body() createUserDto: CreateUserDto) {
-    return await this.botService.createUser(createUserDto);
-  }
 
   @Patch('/patchUser')
   async patchUser(@Body() patchUserDto: PatchUserDto) {
     return await this.botService.patchUser(patchUserDto);
-  }
-
-  @Post('/updateCakeAmount')
-  async changeCakeAmount(@Body() updateCakeDto: UpdateCakeAmountDto) {
-    console.log(updateCakeDto);
-    return await this.botService.updateCake(updateCakeDto);
   }
 
   @Get('/getCakeRank')
@@ -54,5 +51,16 @@ export class BotController {
   async getMyCake(@Query('uuid') uuid: string) {
     console.log(uuid);
     return await this.botService.getMyCake(uuid);
+  }
+
+  @Post('/updateCake')
+  async changeCakeAmount(@Body() updateCakeDto: UpdateCakeDto) {
+    return await this.botService.updateCake(updateCakeDto);
+  }
+
+  @Post('/sendCake')
+  async sendCake(@Body() sendCakeDto: SendCakeDto) {
+    console.log(sendCakeDto);
+    return await this.botService.sendCake(sendCakeDto)
   }
 }
