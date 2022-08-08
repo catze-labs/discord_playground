@@ -68,15 +68,61 @@ const commands = [
   .addUserOption(
     new SlashCommandUserOption()
     .setName('receiver')
-    .setDescription('receiver of send cake')
+    .setDescription('Receiver')
     .setRequired(true)
   )
   .addNumberOption(
     new SlashCommandNumberOption()
     .setName('amount')
-    .setDescription('send amount of cake')
+    .setDescription('Send amount of cake')
+    .setRequired(true)
+  ),
+
+  new SlashCommandBuilder()
+  .setName('give')
+  .setDescription('Give a cake to user by Admin')
+  .addUserOption(
+    new SlashCommandUserOption()
+    .setName('receiver')
+    .setDescription('Receiver user')
     .setRequired(true)
   )
+  .addNumberOption(
+    new SlashCommandNumberOption()
+    .setName('amount')
+    .setDescription('Give amount of cake')
+    .setRequired(true)
+  )
+  .addStringOption(
+    new SlashCommandStringOption()
+    .setName('reason')
+    .setDescription('Reason of why admin give a cake')
+    .setRequired(true)
+  ),
+
+  
+  new SlashCommandBuilder()
+  .setName('take')
+  .setDescription('Confiscate a cake by Admin')
+  .addUserOption(
+    new SlashCommandUserOption()
+    .setName('target')
+    .setDescription('Confiscate target User')
+    .setRequired(true)
+  )
+  .addNumberOption(
+    new SlashCommandNumberOption()
+    .setName('amount')
+    .setDescription('Confiscate amount of cake')
+    .setRequired(true)
+  )
+  .addStringOption(
+    new SlashCommandStringOption()
+    .setName('reason')
+    .setDescription('Reason of why admin confiscate a cake')
+    .setRequired(true)
+  )
+  
   
 ].map((command) => command.toJSON());
 

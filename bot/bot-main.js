@@ -24,9 +24,8 @@ client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   // 인터랙션에서 명령어와 옵션 parameter 가져옴
-  const { commandName, options } = interaction;
+  const { commandName} = interaction;
 
-  console.log(interaction)
   await CommandColleciton[commandName].exec(interaction);
 });
 

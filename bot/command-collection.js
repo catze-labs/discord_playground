@@ -419,11 +419,14 @@ module.exports = {
       await interaction.deferReply();
 
       // 권한
+      if(interaction.user.id != '1003617859357904916') {
+        await interaction.editReply(`You're not administrator`)
+      }
 
       const options = interaction.options
       const receiver = options.get('receiver').member.user.id;
       const amount = options.get('amount').value
-      const reason = optoins.get('reason').value
+      const reason = options.get('reason').value
 
       try {
         const config = {
@@ -436,11 +439,30 @@ module.exports = {
           },
         }
         await axios(config);
+
+
+        const resultEmbed = new EmbedBuilder()
+        .setColor('#FFD650')
+        .setTitle('Give Cake to User')
+        .setDescription('Result Admin Give a Cake')
+        .addFields(
+          { name: 'To', value: receiver },
+          {
+            name: 'Amount',
+            value: amount + '',
+          },
+          { name: 'Reason', value: `${reason}` },
+          {
+            name: 'Transaction Approved Date',
+            value: new Date().toString(),
+          },
+        )
+
+        await interaction.editReply({
+          embeds : [resultEmbed]
+        })
       } catch (e) {
         console.log(e)
-        await interaction.editReply(!e.response.data.message
-          ? 'Internal Server Error: Plz contact admin'
-          : e.response.data.message)
       }
     }
   },
@@ -450,9 +472,12 @@ module.exports = {
       await interaction.deferReply();
 
       // 권한
+      if(interaction.user.id != '1003617859357904916') {
+        await interaction.editReply(`You're not administrator`)
+      }
       
       const options = interaction.options
-      const receiver = options.get('receiver').member.user.id;
+      const target = options.get('target').member.user.id;
       const amount = options.get('amount').value
       const reason = options.get('reason').value
 
@@ -461,17 +486,35 @@ module.exports = {
           method: 'post',
           url: process.env.API_URL + '/bot/updateCake',
           data: {
-            uuid: receiver,
+            uuid: target,
             reason: `TAKE ${reason}`,
             amount: -amount,
           },
         }
         await axios(config);
+
+        const resultEmbed = new EmbedBuilder()
+        .setColor('#FFD650')
+        .setTitle('Confiscate Cake from User')
+        .setDescription('Result Admin confiscate a Cake')
+        .addFields(
+          { name: 'Target User', value: target },
+          {
+            name: 'Amount',
+            value: -amount + ''
+          },
+          { name: 'Reason', value: `${reason}` },
+          {
+            name: 'Transaction Approved Date',
+            value: new Date().toString(),
+          }
+        )
+
+        await interaction.editReply({
+          embeds : [resultEmbed]
+        })
       } catch (e) {
         console.log(e)
-        await interaction.editReply(!e.response.data.message
-          ? 'Internal Server Error: Plz contact admin'
-          : e.response.data.message)
       }
     }
   },
