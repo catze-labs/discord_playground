@@ -24,7 +24,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async findUserByIdx(idx: number) {
     try {
-      return await this.user.findUnique({
+      return await this.user.findUniqueOrThrow({
         where: {
           idx,
         },
@@ -40,7 +40,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async findUserByDiscordUUID(uuid: string) {
     try {
-      return await this.user.findUnique({
+      return await this.user.findUniqueOrThrow({
         where: {
           discordUUID: uuid,
         },
