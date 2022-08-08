@@ -47,11 +47,12 @@ export class BotService {
       ROULETTE: 15,
       WORK: 60,
       DAILY_REWARD: 1440,
+      OOTD_UPLOAD : 1440
     };
 
     // 케이크 업데이트에 시간 주기 제한이 걸려있다면
     if (reasonPeriodicTimeObj[reason]) {
-      // 마지막으로 실행됬던 같은 이유의 히스토리 가져옴
+      // 마지막으로 실행됬던 같은 유저의 - 같은 이유의 히스토리 가져옴
       const lastCakeUpdateHistory = await this.prisma.getLastCakeUpdateHistory(
         uuid,
         reason,

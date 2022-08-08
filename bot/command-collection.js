@@ -351,6 +351,48 @@ module.exports = {
     },
   },
 
+  'ootd-upload' : {
+    async exec(msg) { 
+
+      // 채널 확인하는 작업 필요
+
+      const amount = 100;
+      console.log(process.env.API_URL)
+      
+      try {
+        const config = {
+          method: 'post',
+          url: process.env.API_URL + '/bot/updateCakeAmount',
+          data: {
+            uuid: msg.author.id,
+            reason: 'OOTD_UPLOAD',
+            amount: amount,
+          },
+        }
+
+        await axios(config);
+        msg.reply('OOTD Upload Success! U earn 100 cakes!')
+      } catch(e) {
+        console.log(e)
+        msg.reply('Internal Server Error. Plz Contact admin')
+      }
+    }
+  },
+
+  send : {
+    exec(interaction) {
+      interaction.reply('send')
+    }
+  },
+
+  give : {
+
+  },
+
+  take : {
+    
+  },
+
   member: {
     exec(interaction) {
       const guildId = interaction.guildId;
@@ -377,6 +419,7 @@ module.exports = {
         });
     },
   },
+
   roles: {
     exec(interaction) {
       const guildId = interaction.guildId;

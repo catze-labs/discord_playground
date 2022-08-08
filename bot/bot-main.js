@@ -36,17 +36,16 @@ client.on('messageCreate', async (msg) => {
   let imgIsIncluded = false;
 
   // 첨부파일 리스트 확인해서 컨텐츠 타입이 이미지인지 확인
+  const imgReg = new RegExp('image\/[A-z]*','g')
   attachmentsList.forEach((v) => {
-    if (v.contentType === 'image/jpeg') {
+    if (imgReg.test(v.contentType)) {
       imgIsIncluded = true;
     }
   });
 
   // 만약 이미지가 올라왔을 경우
   if (imgIsIncluded) {
-    // msg.reply("Img is included!");
-    const channel = client.channels.cache.get(msg.channelId);
-    channel.send('Img is included');
+    await CommandColleciton['ootd-upload'].exec(msg)
   }
 });
 
