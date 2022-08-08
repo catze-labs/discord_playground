@@ -33,7 +33,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       });
     } catch (e) {
-      console.log(e);
+      console.log(e)
+      throw new InternalServerErrorException('Internal Server error')
     }
   }
 
@@ -56,7 +57,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     const { uuid, discordUsername, guildNickname, discriminator } =
       createuserDto;
     try {
-      await this.user.create({
+      const newUser = await this.user.create({
         data: {
           discordUUID: uuid,
           discordUsername,
@@ -76,7 +77,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
       return await this.user.findUnique({
         where: {
-          discordUUID: uuid,
+          discordUUID: newUser.discordUUID,
         },
         include: {
           Cake: true,
@@ -84,6 +85,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       });
     } catch (e) {
       console.log(e);
+      throw new InternalServerErrorException('Internal Server error')
     }
   }
 
@@ -117,12 +119,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         take: Number(take),
       });
 
-      console.log(cakeList);
-
       return cakeList;
     } catch (e) {
       console.log(e);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException('Internal Server error')
     }
   }
 
@@ -151,7 +151,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
       // 변경 후 값이 음수라면 있던 케이크 모두 0 으로 만듦.
       if(amount + user.Cake.cake < 0) {
-        await this.$transaction([
+        const [updatedCake, updateHistory] = await this.$transaction([
           this.cake.update({
             where: { userIdx: user.idx },
             data: {
@@ -165,13 +165,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
               reason,
             },
           })
-
         ])
+
+        return {
+          transaction_id_list : [updateHistory.idx]
+        }
       } else {
         // 잔액이 양수로 남는다면 정상처리
         const newCakeAmount = user.Cake.cake + amount;
-
-        await this.$transaction([
+        const [updatedCake, updateHistory] = await this.$transaction([
           this.cake.update({
             where: { userIdx: user.idx },
             data: {
@@ -186,6 +188,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
             },
           })
         ])
+
+        return {
+          transaction_id_list : [updateHistory.idx]
+        }
       }
     } catch (e) {
       throw 'Transaction Failed'
@@ -203,27 +209,32 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
     // 보내는 사람의 케이크가 보내려는 케이크 수량보다 큰 경우 (정상처리)
     if(sendUser.Cake.cake >= sendCakeDto.amount) {
-      const sendUserCake : number = sendUser.Cake.cake - sendCakeDto.amount;
-      const receiverUserCake : number = receiverUser.Cake.cake + sendCakeDto.amount;
+      const sendUserCakeAmount : number = sendUser.Cake.cake - sendCakeDto.amount;
+      const receiverUserCakeAmount : number = receiverUser.Cake.cake + sendCakeDto.amount;
   
       try {
-        await this.$transaction([
-          this.cake.update({where : {userIdx : sendUser.idx}, data : { cake : sendUserCake}}),
-          this.cake.update({where : {userIdx : receiverUser.idx}, data : {cake : receiverUserCake}}),
-          this.cakeUpdateHistory.createMany({
-            data : [
-              {
-                userIdx : sendUser.idx,
-                changeAmount : -sendCakeDto.amount,
-                reason : 'SEND'
-              },{
-                userIdx : receiverUser.idx,
+        const [sendUserCake, receiverUserCake, sendHistory, receiveHistory] = await this.$transaction([
+          this.cake.update({where : {userIdx : sendUser.idx}, data : { cake : sendUserCakeAmount}}),
+          this.cake.update({where : {userIdx : receiverUser.idx}, data : {cake : receiverUserCakeAmount}}),
+          this.cakeUpdateHistory.create({
+            data : {
+              userIdx : sendUser.idx,
+              changeAmount : -sendCakeDto.amount,
+              reason : 'SEND'
+            }
+          }),
+          this.cakeUpdateHistory.create({
+            data : {
+              userIdx : receiverUser.idx,
                 changeAmount : sendCakeDto.amount,
                 reason : 'RECEIVE'
-              },
-            ]
+            }
           })
-        ])
+        ]);
+
+        return {
+          transaction_id_list : [sendHistory.idx , receiveHistory.idx]
+        }
       } catch(e) {
         throw 'Transaction Failed'
       }

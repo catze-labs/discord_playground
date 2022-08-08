@@ -74,7 +74,7 @@ export class BotService {
         // 마지막 기록시간 + 주기시간이 지났다면
         if (now > lastCakeUpdateHistoryDate) {
           // 업데이트
-          await this.prisma.updateCake(updateCakeAmountDto);
+          return await this.prisma.updateCake(updateCakeAmountDto);
         } else {
           // 지나지 않았다면 남은 시간 초로 반환
           let remainTime =
@@ -87,10 +87,10 @@ export class BotService {
         }
       } else {
         // 존재하지 않을 때
-        await this.prisma.updateCake(updateCakeAmountDto);
+        return await this.prisma.updateCake(updateCakeAmountDto);
       }
     } else {
-      await this.prisma.updateCake(updateCakeAmountDto);
+      return await this.prisma.updateCake(updateCakeAmountDto);
     }
   }
 
@@ -105,7 +105,7 @@ export class BotService {
 
   async sendCake(sendCakeDto : SendCakeDto) {
     try {
-      await this.prisma.sendCake(sendCakeDto)
+      return await this.prisma.sendCake(sendCakeDto)
     } catch (e) {
       throw new InternalServerErrorException(e)
     }

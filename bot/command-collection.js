@@ -402,13 +402,34 @@ module.exports = {
             amount
           },
         }
-        await axios(config);
+        const result = await axios(config);
 
-        await interaction.editReply('Send Cake Success')
+        // udpate cake history id list
+        const transactionIdList = result.data.transaction_id_list.map(v => '#' + v)
+
+        const resultEmbed = new EmbedBuilder()
+        .setColor('#FFD650')
+        .setTitle('Send Cake to User')
+        .setDescription(`Transaction ${transactionIdList.join(', ')} : send a cake`)
+        .addFields(
+          { name : 'From', value: sender },
+          { name: 'To', value: receiver },
+          {
+            name: 'Amount',
+            value: amount + '',
+          },
+          {
+            name: 'Transaction Approved Date',
+            value: new Date().toString(),
+          },
+        )
+
+        await interaction.editReply({
+          embeds : [resultEmbed]
+        })
       } catch(e) {
-        await interaction.editReply(!e.response.data.message
-          ? 'Internal Server Error: Plz contact admin'
-          : e.response.data.message)
+        console.log(e)
+        await interaction.editReply('Internal Server Error')
       }
 
     }
@@ -438,13 +459,14 @@ module.exports = {
             amount: amount,
           },
         }
-        await axios(config);
+        const result = await axios(config);
+        const transactionIdList = result.data.transaction_id_list.map(v => '#' + v)
 
 
         const resultEmbed = new EmbedBuilder()
         .setColor('#FFD650')
         .setTitle('Give Cake to User')
-        .setDescription('Result Admin Give a Cake')
+        .setDescription(`Transaction ${transactionIdList.join(', ')} : give a cake`)
         .addFields(
           { name: 'To', value: receiver },
           {
@@ -491,12 +513,13 @@ module.exports = {
             amount: -amount,
           },
         }
-        await axios(config);
+        const result = await axios(config);
 
+        const transactionIdList = result.data.transaction_id_list.map(v => '#' + v)
         const resultEmbed = new EmbedBuilder()
         .setColor('#FFD650')
         .setTitle('Confiscate Cake from User')
-        .setDescription('Result Admin confiscate a Cake')
+        .setDescription(`Transaction ${transactionIdList.join(', ')} : confiscate a cake`)
         .addFields(
           { name: 'Target User', value: target },
           {

@@ -49,7 +49,6 @@ export class BotController {
 
   @Get('/getMyCake')
   async getMyCake(@Query('uuid') uuid: string) {
-    console.log(uuid);
     return await this.botService.getMyCake(uuid);
   }
 
@@ -60,7 +59,6 @@ export class BotController {
 
   @Post('/sendCake')
   async sendCake(@Body() sendCakeDto: SendCakeDto) {
-    console.log(sendCakeDto);
     return await this.botService.sendCake(sendCakeDto)
   }
 }
