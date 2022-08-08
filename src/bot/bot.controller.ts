@@ -47,9 +47,14 @@ export class BotController {
     return await this.botService.getCakeRank(skip, take);
   }
 
-  @Get('/getMyCake')
+  @Get('/getUserCake')
   async getMyCake(@Query('uuid') uuid: string) {
-    return await this.botService.getMyCake(uuid);
+    return await this.botService.getUserCakeByUUID(uuid);
+  }
+
+  @Get('/getUserCakeHistoryList')
+  async getUserCakeHistoryList(@Query('uuid') uuid: string, @Query('count') count : number) {
+    return await this.botService.getUserCakeUpdateHistoryByUUID(uuid, Number(count))
   }
 
   @Post('/updateCake')

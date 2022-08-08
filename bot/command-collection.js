@@ -171,7 +171,7 @@ module.exports = {
       try {
         const config = {
           method: 'get',
-          url: `http://localhost:8080/bot/getMyCake?uuid=${interaction.user.id}`,
+          url: `http://localhost:8080/bot/getUserCake?uuid=${interaction.user.id}`,
         };
 
         const result = await axios(config);
@@ -188,6 +188,44 @@ module.exports = {
         await interaction.editReply('Internal Server Error');
       }
     },
+  },
+
+  'my-cake-history' : {
+    async exec(interaction) {
+      await interaction.deferReply()
+
+      const count = interaction.options.get('count').value
+      try {
+        const config = {
+          method : 'get',
+          url : process.env.API_URL + `/bot/getUserCakeHistoryList?uuid=${interaction.user.id}&count=${count}`
+        }
+
+        const result = await axios(config)
+
+        const parsedList = result.data.map(v => {return {
+          name : v.createdAt,
+          value : `Reason : ${v.reason} \nAmount : ${v.changeAmount}`
+        }});
+
+        console.log(parsedList)
+
+        const resultEmbed = new EmbedBuilder()
+          .setColor('#FFD650')
+          .setTitle(`User #${interaction.user.id} cake history`)
+          .setDescription('Cake history')
+          .addFields(
+            ...parsedList
+          )
+
+        await interaction.editReply({
+          embeds : [resultEmbed]
+        })
+      } catch(e) {
+        console.log(e)
+        await interaction.editReply('Internal Server Error')
+      }
+    }
   },
 
   'daily-reward': {
@@ -373,6 +411,81 @@ module.exports = {
     },
   },
 
+  'rps-bet': {
+    async exec(interaction) {
+      // 랜덤으로 숫자 지정
+      const options = interaction.options;
+      const betAmount = options.get('bet-amount').value;
+      const randomRpsValue = Math.random() * (120 - 1) + 1;
+
+      // 유저 케이크 토큰 변화량
+      let amount = null;
+
+      // 숫자에 범위에 따라 W/L/D
+      if (randomRpsValue < 40) {
+        // 유저 승리
+        amount = betAmount * 2;
+      } else if (randomRpsValue > 40 && randomRpsValue <= 80) {
+        // 유저 패배
+        amount = -betAmount;
+      } else {
+        // 비김
+        amount = 0;
+      }
+
+      const drawString = `Draw! :p`;
+      const winString = `You Win!!! You earned ${amount} of cake!! :)`;
+      const loseString = `You Lose... You loss ${amount} of cake :(`;
+
+      await interaction.deferReply();
+      try {
+        // 유저가 가지고 있는 케이크 확인
+        const config1 = {
+          method: 'get',
+          url: `http://localhost:8080/bot/getMyCake?uuid=${interaction.user.id}`,
+        };
+
+        // 베팅할 케이크 > 가지고있는 케이크
+        const result = await axios(config1);
+        if(result.data.cake < betAmount) {
+          await interaction.editReply('Not enough cake to bet');
+          return;
+        }
+
+        // 베팅할 케이크 < 가지고있는 케이크
+        const config2 = {
+          method: 'post',
+          url: process.env.API_URL + '/bot/updateCake',
+          data: {
+            uuid: interaction.user.id,
+            reason: 'RPS_BET',
+            amount: amount,
+          },
+        };
+        const updateCakeAmountResult = await axios(config2);
+        const reqStatus = updateCakeAmountResult.status;
+
+        if (reqStatus == 201) {
+          if (amount > 0) {
+            await interaction.editReply(winString);
+          } else if (amount < 0) {
+            await interaction.editReply(loseString);
+          } else {
+            await interaction.editReply(drawString);
+          }
+        } else {
+          throw new Error('');
+        }
+      } catch (e) {
+        const errorString = !e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message;
+
+        await interaction.editReply(`${errorString}`);
+      }
+    },
+  },
+
   'ootd-upload' : {
     async exec(msg) { 
 
@@ -410,6 +523,11 @@ module.exports = {
       const sender = interaction.user.id
       const receiver = options.get('receiver').member.user.id;
       const amount = options.get('amount').value
+
+      if(amount <= 0) {
+        await interaction.editReply("Send amount should over 0")
+        return;
+      }
 
       try {
         const config = {
@@ -460,7 +578,8 @@ module.exports = {
 
       // 권한
       if(interaction.user.id != '1003617859357904916') {
-        await interaction.editReply(`You're not administrator`)
+        await interaction.editReply(`You're not administrator`);
+        return;
       }
 
       const options = interaction.options
@@ -515,6 +634,7 @@ module.exports = {
       // 권한
       if(interaction.user.id != '1003617859357904916') {
         await interaction.editReply(`You're not administrator`)
+        return;
       }
       
       const options = interaction.options

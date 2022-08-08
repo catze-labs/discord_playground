@@ -27,6 +27,17 @@ const commands = [
   new SlashCommandBuilder()
     .setName('my-cake')
     .setDescription('Show User Cakes'),
+  
+  new SlashCommandBuilder()
+  .setName('my-cake-history')
+  .setDescription("Show list of uses's cake change history")
+  .addNumberOption(
+    new SlashCommandNumberOption()
+    .setName('count')
+    .setDescription('length of list')
+    .setMinValue(2)
+    .setMaxValue(10)
+  ),
 
   new SlashCommandBuilder()
     .setName('leaderboard')
@@ -53,15 +64,6 @@ const commands = [
   new SlashCommandBuilder().setName('members').setDescription('list members'),
   new SlashCommandBuilder().setName('roles').setDescription('list roles'),
 
-  new SlashCommandBuilder()
-    .setName('rps')
-    .setDescription('rock-paper-scissors')
-    .addStringOption(
-      new SlashCommandStringOption()
-        .setName('rps')
-        .setDescription('Input R or P or S')
-        .setRequired(true),
-    ),
   new SlashCommandBuilder()
   .setName('send')
   .setDescription('Send Cake to another user')
@@ -121,8 +123,33 @@ const commands = [
     .setName('reason')
     .setDescription('Reason of why admin confiscate a cake')
     .setRequired(true)
+  ),
+
+  // Games
+  new SlashCommandBuilder()
+    .setName('rps')
+    .setDescription('rock-paper-scissors')
+    .addStringOption(
+      new SlashCommandStringOption()
+        .setName('rps')
+        .setDescription('Input R or P or S')
+        .setRequired(true),
+    ),
+  new SlashCommandBuilder()
+  .setName('rps-bet')
+  .setDescription('rock-paper-scissor game with bet')
+  .addStringOption(
+    new SlashCommandStringOption()
+      .setName('rps')
+      .setDescription('Input R or P or S')
+      .setRequired(true),
   )
-  
+  .addNumberOption(
+    new SlashCommandNumberOption()
+    .setName('bet-amount')
+    .setDescription('bet amount of cake')
+    .setRequired(true)
+  )
   
 ].map((command) => command.toJSON());
 

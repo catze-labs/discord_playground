@@ -130,6 +130,23 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
+  async getCakeUpdateHistory(uuid : string, take : number) {
+    try {
+      const user = await this.findUserByDiscordUUID(uuid);
+      return await this.cakeUpdateHistory.findMany({
+        where: {
+          userIdx: user.idx,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take
+      });
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
   async getLastCakeUpdateHistory(uuid: string, reason: string) {
     try {
       const user = await this.findUserByDiscordUUID(uuid);
@@ -207,8 +224,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     const sendUser = await this.findUserByDiscordUUID(sendCakeDto.sender);
     const receiverUser = await this.findUserByDiscordUUID(sendCakeDto.receiver);
 
-    if(!sendUser || !receiverUser) {
-      throw 'User is not exist'
+    if(!sendUser) {
+      throw 'Sender is not exist'
+    }
+
+    if(!receiverUser) {
+      throw 'Receiver is not exist'
     }
 
     // 보내는 사람의 케이크가 보내려는 케이크 수량보다 큰 경우 (정상처리)

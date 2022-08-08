@@ -44,6 +44,7 @@ export class BotService {
     const reasonPeriodicTimeObj = {
       DICE: 15,
       RPS: 15,
+      RPS_BET: 15,
       COIN: 15,
       ROULETTE: 15,
       WORK: 60,
@@ -98,9 +99,13 @@ export class BotService {
     return await this.prisma.getCakeList(skip, take);
   }
 
-  async getMyCake(uuid: string) {
+  async getUserCakeByUUID(uuid: string) {
     const user = await this.prisma.findUserByDiscordUUID(uuid);
     return user.Cake;
+  }
+
+  async getUserCakeUpdateHistoryByUUID(uuid : string, take : number) {
+    return this.prisma.getCakeUpdateHistory(uuid, take);
   }
 
   async sendCake(sendCakeDto : SendCakeDto) {
