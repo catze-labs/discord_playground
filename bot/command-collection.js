@@ -101,8 +101,6 @@ module.exports = {
     async exec(interaction) {
       await interaction.deferReply();
 
-      await interaction.editReply('tet')
-
       const config = {
         method: 'post',
         url: process.env.API_URL + '/bot/newUser',
