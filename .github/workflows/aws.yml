@@ -24,6 +24,7 @@ jobs:
             git rebase FETCH_HEAD
             npm run build
             pm2 kill
+            npx prisma generate
             node ./bot/deploy-commands.js
             pm2 start node ./dist/main.js
             cd bot
