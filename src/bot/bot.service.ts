@@ -1,4 +1,5 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { CreateUserDto } from 'src/dto/bot/createUser.dto';
 import { PatchUserDto } from 'src/dto/bot/patchUser.dto';
 import { SendCakeDto } from 'src/dto/bot/SendCake.dto';
@@ -114,6 +115,13 @@ export class BotService {
     } catch (e) {
       throw new InternalServerErrorException(e)
     }
+  }
+
+
+  @Cron('45 * * * * *')
+  handleCron() {
+    const logger = new Logger(BotService.name);
+    logger.debug('Called when the current second is 45');
   }
 
   secondsToHMS(seconds: number) {
