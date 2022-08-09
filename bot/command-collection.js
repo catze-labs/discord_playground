@@ -637,7 +637,7 @@ module.exports = {
         // 유저가 가지고 있는 케이크 확인
         const config1 = {
           method: 'get',
-          url: `http://localhost:8080/bot/getMyCake?uuid=${interaction.user.id}`,
+          url: `http://localhost:8080/bot/getUserCake?uuid=${interaction.user.id}`,
         };
 
         // 베팅할 케이크 > 가지고있는 케이크
