@@ -39,6 +39,7 @@ export class BotController {
 
   @Patch('/patchUser')
   async patchUser(@Body() patchUserDto: PatchUserDto) {
+    console.log(patchUserDto.roleList)
     return await this.botService.patchUser(patchUserDto);
   }
 

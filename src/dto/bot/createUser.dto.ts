@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsArray, IsNotEmpty } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -17,4 +17,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty({ description: 'Discord User nickname' })
   guildNickname: string;
+
+  @IsArray()
+  @IsNotEmpty()
+  @ApiProperty({ description : 'Discord User Role List'})
+  roleList : string[];
 }

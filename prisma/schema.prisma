@@ -19,6 +19,12 @@ model User {
   CakeUpdateHistory CakeUpdateHistory[]
 }
 
+model DiscordUserRole {
+  idx Int @id @default(autoincrement())
+  discordUUID String 
+  discordRoleId String
+}
+
 model Cake {
   idx          Int      @id @default(autoincrement())
   userIdx Int @unique

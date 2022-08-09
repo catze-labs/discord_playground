@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, Interval } from '@nestjs/schedule';
 import { CreateUserDto } from 'src/dto/bot/createUser.dto';
 import { PatchUserDto } from 'src/dto/bot/patchUser.dto';
 import { SendCakeDto } from 'src/dto/bot/SendCake.dto';
@@ -9,6 +9,9 @@ import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class BotService {
   constructor(private prisma: PrismaService) {}
+
+  private readonly logger = new Logger(BotService.name);
+  
 
   async findUserByIdx(idx: number) {
     return await this.prisma.findUserByIdx(idx);
@@ -30,6 +33,8 @@ export class BotService {
         `${patchUserDto.oldUUID} is not exist`,
       );
     }
+
+
 
     try {
       await this.prisma.patchUser(patchUserDto);
@@ -118,10 +123,10 @@ export class BotService {
   }
 
 
-  @Cron('45 * * * * *')
+  @Cron('5 * * * * *')
+  // @Interval(5000)
   handleCron() {
-    const logger = new Logger(BotService.name);
-    logger.debug('Called when the current second is 45');
+    this.logger.debug('Called when the current second is 5');
   }
 
   secondsToHMS(seconds: number) {

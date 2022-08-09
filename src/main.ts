@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -18,6 +19,6 @@ async function bootstrap() {
   SwaggerModule.setup('apiv1', app, swaggerDoc);
   await app.listen(port);
 
-  console.log(`NESTJS Server is Listening on ${port}`);
+  Logger.log(`NEST Server is Listening on ${port}`);
 }
 bootstrap();

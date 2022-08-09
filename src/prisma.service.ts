@@ -54,8 +54,16 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async insertUser(createuserDto: CreateUserDto) {
-    const { uuid, discordUsername, guildNickname, discriminator } =
+    const { uuid, discordUsername, guildNickname, discriminator, roleList} =
       createuserDto;
+
+    const roleIdArray = roleList.map(v => {
+      return {
+        discordUUID : uuid,
+        discordRoleId : v
+      }
+    })
+
     try {
       const [newUser] = await this.$transaction([
         this.user.create({
@@ -74,6 +82,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
               },
             },
           },
+        }),
+        this.discordUserRole.createMany({
+          data : roleIdArray
         })
       ]);
 
@@ -92,8 +103,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async patchUser(patchUserDto: PatchUserDto) {
-    const { oldUUID, newUUID, discordUsername, guildNickname, discriminator } =
+    const { oldUUID, newUUID, discordUsername, guildNickname, discriminator, roleList } =
       patchUserDto;
+
+    const roleIdArray = roleList.map(v => {
+      return {
+        discordUUID : newUUID,
+        discordRoleId : v
+      }
+    })
 
     await this.$transaction([
       this.user.update({
@@ -106,6 +124,16 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
           guildNickname,
           discriminator,
         },
+      }),
+      this.discordUserRole.deleteMany({
+        where : {
+          discordUUID : {
+            contains : newUUID
+          }
+        }
+      }),
+      this.discordUserRole.createMany({
+        data : roleIdArray
       })
     ])
   }

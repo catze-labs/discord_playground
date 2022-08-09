@@ -101,6 +101,8 @@ module.exports = {
     async exec(interaction) {
       await interaction.deferReply();
 
+      await interaction.editReply('tet')
+
       const config = {
         method: 'post',
         url: process.env.API_URL + '/bot/newUser',
@@ -112,6 +114,7 @@ module.exports = {
             interaction.member.nickname == null
               ? interaction.user.username
               : interaction.member.nickname,
+          roleList : interaction.member._roles
         },
       };
 

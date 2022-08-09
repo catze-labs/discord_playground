@@ -50,6 +50,7 @@ client.on('messageCreate', async (msg) => {
 });
 
 // 서버에 신규 유저 유입 시 DB 에 만들기
+// 리팩토링 필요
 client.on('guildMemberAdd', async (member) => {
   try {
     var config = {
@@ -68,14 +69,17 @@ client.on('guildMemberAdd', async (member) => {
 });
 
 client.on('guildMemberUpdate', (oldMember, newMember) => {
-  console.log(oldMember);
-  console.log(newMember);
+  // console.log(oldMember);
+  // console.log(newMember);
 
   const oldUUID = oldMember.user.id;
   const newUUID = newMember.user.id;
   const newNickname = newMember.nickname;
   const newDiscordUsername = newMember.user.username;
   const newDiscriminator = newMember.user.discriminator;
+  const newRolesList = newMember._roles;
+
+  
 
   const config = {
     method: 'patch',
@@ -86,12 +90,13 @@ client.on('guildMemberUpdate', (oldMember, newMember) => {
       discordUsername: newDiscordUsername,
       guildNickname: newNickname == null ? newDiscordUsername : newNickname,
       discriminator: newDiscriminator,
+      roleList : newRolesList
     },
   };
 
   axios(config)
     .then((res) => {
-      console.log(res);
+      console.log(res.status);
     })
     .catch((err) => {
       console.log(err.response.data);
