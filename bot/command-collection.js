@@ -352,140 +352,6 @@ module.exports = {
     },
   },
 
-  rps: {
-    async exec(interaction) {
-      // 랜덤으로 숫자 지정
-      const randomRpsValue = Math.random() * (120 - 1) + 1;
-
-      // 유저 케이크 토큰 변화량
-      let amount = null;
-
-      // 숫자에 범위에 따라 W/L/D
-      if (randomRpsValue < 40) {
-        // 유저 승리
-        amount = 100;
-      } else if (randomRpsValue > 40 && randomRpsValue <= 80) {
-        // 유저 패배
-        amount = -30;
-      } else {
-        // 비김
-        amount = 0;
-      }
-
-      const drawString = `Draw! :p`;
-      const winString = `You Win!!! You earned 100 of cake!! :)`;
-      const loseString = `You Lose... You loss 30 of cake :(`;
-
-      await interaction.deferReply();
-      try {
-        const config = {
-          method: 'post',
-          url: process.env.API_URL + '/bot/updateCake',
-          data: {
-            uuid: interaction.user.id,
-            reason: 'RPS',
-            amount: amount,
-          },
-        };
-        const updateCakeAmountResult = await axios(config);
-        const reqStatus = updateCakeAmountResult.status;
-
-        if (reqStatus == 201) {
-          if (amount > 0) {
-            await interaction.editReply(winString);
-          } else if (amount < 0) {
-            await interaction.editReply(loseString);
-          } else {
-            await interaction.editReply(drawString);
-          }
-        } else {
-          throw new Error('');
-        }
-      } catch (e) {
-        const errorString = !e.response.data.message
-          ? 'Internal Server Error: Plz contact admin'
-          : e.response.data.message;
-
-        await interaction.editReply(`${errorString}`);
-      }
-    },
-  },
-
-  'rps-bet': {
-    async exec(interaction) {
-      // 랜덤으로 숫자 지정
-      const options = interaction.options;
-      const betAmount = options.get('bet-amount').value;
-      const randomRpsValue = Math.random() * (120 - 1) + 1;
-
-      // 유저 케이크 토큰 변화량
-      let amount = null;
-
-      // 숫자에 범위에 따라 W/L/D
-      if (randomRpsValue < 40) {
-        // 유저 승리
-        amount = betAmount * 2;
-      } else if (randomRpsValue > 40 && randomRpsValue <= 80) {
-        // 유저 패배
-        amount = -betAmount;
-      } else {
-        // 비김
-        amount = 0;
-      }
-
-      const drawString = `Draw! :p`;
-      const winString = `You Win!!! You earned ${amount} of cake!! :)`;
-      const loseString = `You Lose... You loss ${amount} of cake :(`;
-
-      await interaction.deferReply();
-      try {
-        // 유저가 가지고 있는 케이크 확인
-        const config1 = {
-          method: 'get',
-          url: `http://localhost:8080/bot/getMyCake?uuid=${interaction.user.id}`,
-        };
-
-        // 베팅할 케이크 > 가지고있는 케이크
-        const result = await axios(config1);
-        if(result.data.cake < betAmount) {
-          await interaction.editReply('Not enough cake to bet');
-          return;
-        }
-
-        // 베팅할 케이크 < 가지고있는 케이크
-        const config2 = {
-          method: 'post',
-          url: process.env.API_URL + '/bot/updateCake',
-          data: {
-            uuid: interaction.user.id,
-            reason: 'RPS_BET',
-            amount: amount,
-          },
-        };
-        const updateCakeAmountResult = await axios(config2);
-        const reqStatus = updateCakeAmountResult.status;
-
-        if (reqStatus == 201) {
-          if (amount > 0) {
-            await interaction.editReply(winString);
-          } else if (amount < 0) {
-            await interaction.editReply(loseString);
-          } else {
-            await interaction.editReply(drawString);
-          }
-        } else {
-          throw new Error('');
-        }
-      } catch (e) {
-        const errorString = !e.response.data.message
-          ? 'Internal Server Error: Plz contact admin'
-          : e.response.data.message;
-
-        await interaction.editReply(`${errorString}`);
-      }
-    },
-  },
-
   'ootd-upload' : {
     async exec(msg) { 
 
@@ -677,6 +543,228 @@ module.exports = {
         })
       } catch (e) {
         console.log(e)
+      }
+    }
+  },
+
+  rps: {
+    async exec(interaction) {
+      // 랜덤으로 숫자 지정
+      const randomRpsValue = Math.random() * (120 - 1) + 1;
+
+      // 유저 케이크 토큰 변화량
+      let amount = null;
+
+      // 숫자에 범위에 따라 W/L/D
+      if (randomRpsValue < 40) {
+        // 유저 승리
+        amount = 100;
+      } else if (randomRpsValue > 40 && randomRpsValue <= 80) {
+        // 유저 패배
+        amount = -30;
+      } else {
+        // 비김
+        amount = 0;
+      }
+
+      const drawString = `Draw! :p`;
+      const winString = `You Win!!! You earned 100 of cake!! :)`;
+      const loseString = `You Lose... You loss 30 of cake :(`;
+
+      await interaction.deferReply();
+      try {
+        const config = {
+          method: 'post',
+          url: process.env.API_URL + '/bot/updateCake',
+          data: {
+            uuid: interaction.user.id,
+            reason: 'RPS',
+            amount: amount,
+          },
+        };
+        const updateCakeAmountResult = await axios(config);
+        const reqStatus = updateCakeAmountResult.status;
+
+        if (reqStatus == 201) {
+          if (amount > 0) {
+            await interaction.editReply(winString);
+          } else if (amount < 0) {
+            await interaction.editReply(loseString);
+          } else {
+            await interaction.editReply(drawString);
+          }
+        } else {
+          throw new Error('');
+        }
+      } catch (e) {
+        const errorString = !e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message;
+
+        await interaction.editReply(`${errorString}`);
+      }
+    },
+  },
+
+  'rps-bet': {
+    async exec(interaction) {
+      // 랜덤으로 숫자 지정
+      const options = interaction.options;
+      const betAmount = options.get('bet').value;
+      const randomRpsValue = Math.random() * (120 - 1) + 1;
+
+      // 유저 케이크 토큰 변화량
+      let amount = null;
+
+      // 숫자에 범위에 따라 W/L/D
+      if (randomRpsValue < 40) {
+        // 유저 승리
+        amount = betAmount * 2;
+      } else if (randomRpsValue > 40 && randomRpsValue <= 80) {
+        // 유저 패배
+        amount = -betAmount;
+      } else {
+        // 비김
+        amount = 0;
+      }
+
+      const drawString = `Draw! :p`;
+      const winString = `You Win!!! You earned ${amount} of cake!! :)`;
+      const loseString = `You Lose... You loss ${amount} of cake :(`;
+
+      await interaction.deferReply();
+      try {
+        // 유저가 가지고 있는 케이크 확인
+        const config1 = {
+          method: 'get',
+          url: `http://localhost:8080/bot/getMyCake?uuid=${interaction.user.id}`,
+        };
+
+        // 베팅할 케이크 > 가지고있는 케이크
+        const result = await axios(config1);
+        if(result.data.cake < betAmount) {
+          await interaction.editReply('Not enough cake to bet');
+          return;
+        }
+
+        // 베팅할 케이크 < 가지고있는 케이크
+        const config2 = {
+          method: 'post',
+          url: process.env.API_URL + '/bot/updateCake',
+          data: {
+            uuid: interaction.user.id,
+            reason: 'RPS_BET',
+            amount: amount,
+          },
+        };
+        const updateCakeAmountResult = await axios(config2);
+        const reqStatus = updateCakeAmountResult.status;
+
+        if (reqStatus == 201) {
+          if (amount > 0) {
+            await interaction.editReply(winString);
+          } else if (amount < 0) {
+            await interaction.editReply(loseString);
+          } else {
+            await interaction.editReply(drawString);
+          }
+        } else {
+          throw new Error('');
+        }
+      } catch (e) {
+        const errorString = !e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message;
+
+        await interaction.editReply(`${errorString}`);
+      }
+    },
+  },
+
+  dice : {
+    async exec(interaction) {
+      let diceNumber = interaction.options.get('number');
+      let amount = interaction.options.get('bet').value;
+      const randomValue = Math.random() * (120 - 1) + 1;
+
+      if(randomValue < diceNumber * 20 && randomValue > (diceNumber-1) * 20) {
+        amount *= 2;
+      } else {
+        amount *= -1;
+      }
+
+      await interaction.deferReply()
+      try {
+        const config = {
+          method: 'post',
+          url: process.env.API_URL + '/bot/updateCake',
+          data: {
+            uuid: interaction.user.id,
+            reason: 'DICE',
+            amount: amount,
+          },
+        };
+        const result = await axios(config);
+        const reqStatus = result.status;
+
+        if (reqStatus == 201) {
+          if (amount > 0) {
+            await interaction.editReply(`You Win! You earned ${amount} of cakes! `);
+          } else if (amount < 0) {
+            await interaction.editReply(`You lose.. You loses ${amount*-1} of cakes`);
+          }
+        } else {
+          throw new Error('');
+        }
+      } catch (e) {
+        const errorString = !e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message;
+        await interaction.editReply(`${errorString}`);
+      }
+    }
+  },
+
+  roulette : {
+    async exec(interaction) {
+      let amount = interaction.options.get('bet').value;
+      const randomValue = Math.random() * (100 - 1) + 1;
+
+      if(randomValue > 50) {
+        amount *= 2;
+      } else {
+        amount *= -1;
+      }
+
+      await interaction.deferReply()
+      try {
+        const config = {
+          method: 'post',
+          url: process.env.API_URL + '/bot/updateCake',
+          data: {
+            uuid: interaction.user.id,
+            reason: 'ROULETTE',
+            amount: amount,
+          },
+        };
+        const result = await axios(config);
+        const reqStatus = result.status;
+
+        if (reqStatus == 201) {
+          if (amount > 0) {
+            await interaction.editReply(`You Win! You earned ${amount} of cakes! `);
+          } else if (amount < 0) {
+            await interaction.editReply(`You lose.. You loses ${amount*-1} of cakes`);
+          }
+        } else {
+          throw new Error('');
+        }
+      } catch (e) {
+        console.log(e)
+        const errorString = !e.response.data.message
+          ? 'Internal Server Error: Plz contact admin'
+          : e.response.data.message;
+        await interaction.editReply(`${errorString}`);
       }
     }
   },

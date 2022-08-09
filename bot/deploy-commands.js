@@ -146,7 +146,33 @@ const commands = [
   )
   .addNumberOption(
     new SlashCommandNumberOption()
-    .setName('bet-amount')
+    .setName('bet')
+    .setDescription('bet amount of cake')
+    .setRequired(true)
+  ),
+
+  new SlashCommandBuilder()
+  .setName('dice')
+  .setDescription('dice game with bet')
+  .addNumberOption(
+    new SlashCommandNumberOption()
+    .setName('number')
+    .setDescription('number in dice. 1~6')
+    .setRequired(true)
+  )
+  .addNumberOption(
+    new SlashCommandNumberOption()
+    .setName('bet')
+    .setDescription('bet amount of cake')
+    .setRequired(true)
+  ),
+
+  new SlashCommandBuilder()
+  .setName('roulette')
+  .setDescription('roulette game with bet')
+  .addNumberOption(
+    new SlashCommandNumberOption()
+    .setName('bet')
     .setDescription('bet amount of cake')
     .setRequired(true)
   )
