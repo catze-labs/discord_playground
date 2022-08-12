@@ -2,8 +2,8 @@ const { Client, GatewayIntentBits, Message } = require('discord.js');
 var axios = require('axios');
 require('dotenv').config();
 const CommandColleciton = require('./command-collection');
-const { async } = require('rxjs');
 
+// 봇이 액세스 할 수 있는 범위
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -68,6 +68,7 @@ client.on('guildMemberAdd', async (member) => {
   }
 });
 
+// 서버 멤버 중 계정에 업데이트 있을 경우 정보 갱신
 client.on('guildMemberUpdate', (oldMember, newMember) => {
   // console.log(oldMember);
   // console.log(newMember);
