@@ -43,3 +43,6 @@ prisma/migrations
 
 #pem
 *.pem
+
+#k6 test result
+test/test_result

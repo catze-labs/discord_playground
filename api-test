@@ -1,0 +1,22 @@
+#!/bin/sh
+# This script for run /test/api-test-script.js with k6
+
+echo "Start k6 API test $1 module's endpoints"
+
+
+TEST_SCRIPT_DIR="./test/$1"
+TEST_RESULT_DIR="./test/test_result"
+TEST_RESULT_MODULE_DIR="./test/test_result/$1"
+
+if [ ! -d $TEST_RESULT_DIR ];then
+	mkdir $TEST_RESULT_DIR
+fi
+
+if [ ! -d $TEST_RESULT_MODULE_DIR ];then
+	mkdir $TEST_RESULT_MODULE_DIR
+fi
+
+DATETIME_STRING=`date +%Y-%m-%d-%T`
+
+k6 run $TEST_SCRIPT_DIR/api-test-script.js >> $TEST_RESULT_MODULE_DIR/${DATETIME_STRING}_$1_result.txt
+
