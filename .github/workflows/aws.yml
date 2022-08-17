@@ -1,14 +1,14 @@
-name : deploy
+name: deploy
 
 on:
   push:
-    paths-ignore: [ '*.md', '.gitignore', '.eslintrc', '.prettierrc' ]
+    paths-ignore: ['*.md', '.gitignore', '.eslintrc', '.prettierrc']
     branches: [main]
 
 jobs:
   AUTO_DEPLOY:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
       - name: Run Script in Server
@@ -23,10 +23,10 @@ jobs:
             git fetch origin main
             git rebase FETCH_HEAD
             npm run build
-            pm2 kill
             npx prisma generate
-            node ./bot/deploy-commands.js
+            pm2 kill
             pm2 start node ./dist/main.js
             cd bot
+            node deploy-commands.js
             pm2 start node bot-main.js
             whoami
