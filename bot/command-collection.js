@@ -108,7 +108,9 @@ module.exports = {
         .setImage(
           'https://d1fdloi71mui9q.cloudfront.net/tVwOKL1uTvWxry5A4Gnj_W9QsYsa9rstZ43yg',
         )
-        .setFooter({ text: 'Make sure to check out the rules channel' });
+        .setFooter({
+          text: 'Make sure to check out the rules channel',
+        });
 
       // interaction.user.roles.cache.has('993458489395531856')
       await interaction.reply({

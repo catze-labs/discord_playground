@@ -7,6 +7,7 @@ const {
   SlashCommandUserOption,
 } = require('discord.js');
 const { REST } = require('@discordjs/rest');
+const Helper = require('./helper');
 require('dotenv').config();
 
 const commands = [
