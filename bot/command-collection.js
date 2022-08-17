@@ -38,6 +38,26 @@ module.exports = {
     },
   },
 
+  'yooldo-status': {
+    async exec(interaction) {
+      await interaction.deferReply();
+
+      try {
+        console.log('test');
+        const result = await axios({
+          method: 'get',
+          url: 'https://dev.by-catze.xyz/health',
+        });
+
+        if (result.data['health']) {
+          await interaction.editReply('Yooldo-Server Status : Normal');
+        }
+      } catch (e) {
+        await interaction.editReply('Yooldo-Server Status : Abnormal');
+      }
+    },
+  },
+
   website: {
     async exec(interaction) {
       await interaction.reply('https://cybergalznft.com/');
@@ -112,7 +132,7 @@ module.exports = {
             interaction.member.nickname == null
               ? interaction.user.username
               : interaction.member.nickname,
-          roleList : interaction.member._roles
+          roleList: interaction.member._roles,
         },
       };
 
@@ -191,42 +211,44 @@ module.exports = {
     },
   },
 
-  'my-cake-history' : {
+  'my-cake-history': {
     async exec(interaction) {
-      await interaction.deferReply()
+      await interaction.deferReply();
 
-      const count = interaction.options.get('count').value
+      const count = interaction.options.get('count').value;
       try {
         const config = {
-          method : 'get',
-          url : process.env.API_URL + `/bot/getUserCakeHistoryList?uuid=${interaction.user.id}&count=${count}`
-        }
+          method: 'get',
+          url:
+            process.env.API_URL +
+            `/bot/getUserCakeHistoryList?uuid=${interaction.user.id}&count=${count}`,
+        };
 
-        const result = await axios(config)
+        const result = await axios(config);
 
-        const parsedList = result.data.map(v => {return {
-          name : v.createdAt,
-          value : `Reason : ${v.reason} \nAmount : ${v.changeAmount}`
-        }});
+        const parsedList = result.data.map((v) => {
+          return {
+            name: v.createdAt,
+            value: `Reason : ${v.reason} \nAmount : ${v.changeAmount}`,
+          };
+        });
 
-        console.log(parsedList)
+        console.log(parsedList);
 
         const resultEmbed = new EmbedBuilder()
           .setColor('#FFD650')
           .setTitle(`User #${interaction.user.id} cake history`)
           .setDescription('Cake history')
-          .addFields(
-            ...parsedList
-          )
+          .addFields(...parsedList);
 
         await interaction.editReply({
-          embeds : [resultEmbed]
-        })
-      } catch(e) {
-        console.log(e)
-        await interaction.editReply('Internal Server Error')
+          embeds: [resultEmbed],
+        });
+      } catch (e) {
+        console.log(e);
+        await interaction.editReply('Internal Server Error');
       }
-    }
+    },
   },
 
   'daily-reward': {
@@ -319,25 +341,31 @@ module.exports = {
             },
           });
 
-          const transactionIdList = result.data.transaction_id_list.map(v => '#' + v)
+          const transactionIdList = result.data.transaction_id_list.map(
+            (v) => '#' + v,
+          );
           const resultEmbed = new EmbedBuilder()
-          .setColor('#FFD650')
-          .setTitle('Tweet @CybergalzNFT')
-          .setDescription(`Transaction ${transactionIdList.join(', ')} : twitter mentioned @CybergalzNFT`)
-          .addFields(
-            { name: 'Beneficiary', value: interaction.user.id },
-            {
-              name: 'Amount',
-              value: 100 + '',
-            },
-            {
-              name: 'Transaction Approved Date',
-              value: new Date().toString(),
-            },
-          )
+            .setColor('#FFD650')
+            .setTitle('Tweet @CybergalzNFT')
+            .setDescription(
+              `Transaction ${transactionIdList.join(
+                ', ',
+              )} : twitter mentioned @CybergalzNFT`,
+            )
+            .addFields(
+              { name: 'Beneficiary', value: interaction.user.id },
+              {
+                name: 'Amount',
+                value: 100 + '',
+              },
+              {
+                name: 'Transaction Approved Date',
+                value: new Date().toString(),
+              },
+            );
 
           await interaction.editReply({
-            embeds : [resultEmbed]
+            embeds: [resultEmbed],
           });
         } else {
           await interaction.editReply(
@@ -353,14 +381,13 @@ module.exports = {
     },
   },
 
-  'ootd-upload' : {
-    async exec(msg) { 
-
+  'ootd-upload': {
+    async exec(msg) {
       // 채널 확인하는 작업 필요
 
       const amount = 100;
-      console.log(process.env.API_URL)
-      
+      console.log(process.env.API_URL);
+
       try {
         const config = {
           method: 'post',
@@ -370,29 +397,28 @@ module.exports = {
             reason: 'OOTD_UPLOAD',
             amount: amount,
           },
-        }
+        };
 
         await axios(config);
-        msg.reply('OOTD Upload Success! U earn 100 cakes!')
-      } catch(e) {
-        console.log(e)
-        msg.reply('Internal Server Error. Plz Contact admin')
+        msg.reply('OOTD Upload Success! U earn 100 cakes!');
+      } catch (e) {
+        console.log(e);
+        msg.reply('Internal Server Error. Plz Contact admin');
       }
-    }
+    },
   },
 
-  send : {
+  send: {
     async exec(interaction) {
-
       await interaction.deferReply();
 
       const options = interaction.options;
-      const sender = interaction.user.id
+      const sender = interaction.user.id;
       const receiver = options.get('receiver').member.user.id;
-      const amount = options.get('amount').value
+      const amount = options.get('amount').value;
 
-      if(amount <= 0) {
-        await interaction.editReply("Send amount should over 0")
+      if (amount <= 0) {
+        await interaction.editReply('Send amount should over 0');
         return;
       }
 
@@ -403,56 +429,59 @@ module.exports = {
           data: {
             sender,
             receiver,
-            amount
+            amount,
           },
-        }
+        };
         const result = await axios(config);
 
         // udpate cake history id list
-        const transactionIdList = result.data.transaction_id_list.map(v => '#' + v)
+        const transactionIdList = result.data.transaction_id_list.map(
+          (v) => '#' + v,
+        );
 
         const resultEmbed = new EmbedBuilder()
-        .setColor('#FFD650')
-        .setTitle('Send Cake to User')
-        .setDescription(`Transaction ${transactionIdList.join(', ')} : send a cake`)
-        .addFields(
-          { name : 'From', value: sender },
-          { name: 'To', value: receiver },
-          {
-            name: 'Amount',
-            value: amount + '',
-          },
-          {
-            name: 'Transaction Approved Date',
-            value: new Date().toString(),
-          },
-        )
+          .setColor('#FFD650')
+          .setTitle('Send Cake to User')
+          .setDescription(
+            `Transaction ${transactionIdList.join(', ')} : send a cake`,
+          )
+          .addFields(
+            { name: 'From', value: sender },
+            { name: 'To', value: receiver },
+            {
+              name: 'Amount',
+              value: amount + '',
+            },
+            {
+              name: 'Transaction Approved Date',
+              value: new Date().toString(),
+            },
+          );
 
         await interaction.editReply({
-          embeds : [resultEmbed]
-        })
-      } catch(e) {
-        console.log(e)
-        await interaction.editReply('Internal Server Error')
+          embeds: [resultEmbed],
+        });
+      } catch (e) {
+        console.log(e);
+        await interaction.editReply('Internal Server Error');
       }
-
-    }
+    },
   },
 
-  give : {
+  give: {
     async exec(interaction) {
       await interaction.deferReply();
 
       // 권한
-      if(interaction.user.id != '1003617859357904916') {
+      if (interaction.user.id != '1003617859357904916') {
         await interaction.editReply(`You're not administrator`);
         return;
       }
 
-      const options = interaction.options
+      const options = interaction.options;
       const receiver = options.get('receiver').member.user.id;
-      const amount = options.get('amount').value
-      const reason = options.get('reason').value
+      const amount = options.get('amount').value;
+      const reason = options.get('reason').value;
 
       try {
         const config = {
@@ -463,51 +492,54 @@ module.exports = {
             reason: `GIVE ${reason}`,
             amount: amount,
           },
-        }
+        };
         const result = await axios(config);
-        const transactionIdList = result.data.transaction_id_list.map(v => '#' + v)
-
+        const transactionIdList = result.data.transaction_id_list.map(
+          (v) => '#' + v,
+        );
 
         const resultEmbed = new EmbedBuilder()
-        .setColor('#FFD650')
-        .setTitle('Give Cake to User')
-        .setDescription(`Transaction ${transactionIdList.join(', ')} : give a cake`)
-        .addFields(
-          { name: 'To', value: receiver },
-          {
-            name: 'Amount',
-            value: amount + '',
-          },
-          { name: 'Reason', value: `${reason}` },
-          {
-            name: 'Transaction Approved Date',
-            value: new Date().toString(),
-          },
-        )
+          .setColor('#FFD650')
+          .setTitle('Give Cake to User')
+          .setDescription(
+            `Transaction ${transactionIdList.join(', ')} : give a cake`,
+          )
+          .addFields(
+            { name: 'To', value: receiver },
+            {
+              name: 'Amount',
+              value: amount + '',
+            },
+            { name: 'Reason', value: `${reason}` },
+            {
+              name: 'Transaction Approved Date',
+              value: new Date().toString(),
+            },
+          );
 
         await interaction.editReply({
-          embeds : [resultEmbed]
-        })
+          embeds: [resultEmbed],
+        });
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
-    }
+    },
   },
 
-  take : {
+  take: {
     async exec(interaction) {
       await interaction.deferReply();
 
       // 권한
-      if(interaction.user.id != '1003617859357904916') {
-        await interaction.editReply(`You're not administrator`)
+      if (interaction.user.id != '1003617859357904916') {
+        await interaction.editReply(`You're not administrator`);
         return;
       }
-      
-      const options = interaction.options
+
+      const options = interaction.options;
       const target = options.get('target').member.user.id;
-      const amount = options.get('amount').value
-      const reason = options.get('reason').value
+      const amount = options.get('amount').value;
+      const reason = options.get('reason').value;
 
       try {
         const config = {
@@ -518,34 +550,38 @@ module.exports = {
             reason: `TAKE ${reason}`,
             amount: -amount,
           },
-        }
+        };
         const result = await axios(config);
 
-        const transactionIdList = result.data.transaction_id_list.map(v => '#' + v)
+        const transactionIdList = result.data.transaction_id_list.map(
+          (v) => '#' + v,
+        );
         const resultEmbed = new EmbedBuilder()
-        .setColor('#FFD650')
-        .setTitle('Confiscate Cake from User')
-        .setDescription(`Transaction ${transactionIdList.join(', ')} : confiscate a cake`)
-        .addFields(
-          { name: 'Target User', value: target },
-          {
-            name: 'Amount',
-            value: -amount + ''
-          },
-          { name: 'Reason', value: `${reason}` },
-          {
-            name: 'Transaction Approved Date',
-            value: new Date().toString(),
-          }
-        )
+          .setColor('#FFD650')
+          .setTitle('Confiscate Cake from User')
+          .setDescription(
+            `Transaction ${transactionIdList.join(', ')} : confiscate a cake`,
+          )
+          .addFields(
+            { name: 'Target User', value: target },
+            {
+              name: 'Amount',
+              value: -amount + '',
+            },
+            { name: 'Reason', value: `${reason}` },
+            {
+              name: 'Transaction Approved Date',
+              value: new Date().toString(),
+            },
+          );
 
         await interaction.editReply({
-          embeds : [resultEmbed]
-        })
+          embeds: [resultEmbed],
+        });
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
-    }
+    },
   },
 
   rps: {
@@ -643,7 +679,7 @@ module.exports = {
 
         // 베팅할 케이크 > 가지고있는 케이크
         const result = await axios(config1);
-        if(result.data.cake < betAmount) {
+        if (result.data.cake < betAmount) {
           await interaction.editReply('Not enough cake to bet');
           return;
         }
@@ -682,19 +718,22 @@ module.exports = {
     },
   },
 
-  dice : {
+  dice: {
     async exec(interaction) {
       let diceNumber = interaction.options.get('number');
       let amount = interaction.options.get('bet').value;
       const randomValue = Math.random() * (120 - 1) + 1;
 
-      if(randomValue < diceNumber * 20 && randomValue > (diceNumber-1) * 20) {
+      if (
+        randomValue < diceNumber * 20 &&
+        randomValue > (diceNumber - 1) * 20
+      ) {
         amount *= 2;
       } else {
         amount *= -1;
       }
 
-      await interaction.deferReply()
+      await interaction.deferReply();
       try {
         const config = {
           method: 'post',
@@ -710,9 +749,13 @@ module.exports = {
 
         if (reqStatus == 201) {
           if (amount > 0) {
-            await interaction.editReply(`You Win! You earned ${amount} of cakes! `);
+            await interaction.editReply(
+              `You Win! You earned ${amount} of cakes! `,
+            );
           } else if (amount < 0) {
-            await interaction.editReply(`You lose.. You loses ${amount*-1} of cakes`);
+            await interaction.editReply(
+              `You lose.. You loses ${amount * -1} of cakes`,
+            );
           }
         } else {
           throw new Error('');
@@ -723,21 +766,21 @@ module.exports = {
           : e.response.data.message;
         await interaction.editReply(`${errorString}`);
       }
-    }
+    },
   },
 
-  roulette : {
+  roulette: {
     async exec(interaction) {
       let amount = interaction.options.get('bet').value;
       const randomValue = Math.random() * (100 - 1) + 1;
 
-      if(randomValue > 50) {
+      if (randomValue > 50) {
         amount *= 2;
       } else {
         amount *= -1;
       }
 
-      await interaction.deferReply()
+      await interaction.deferReply();
       try {
         const config = {
           method: 'post',
@@ -753,21 +796,25 @@ module.exports = {
 
         if (reqStatus == 201) {
           if (amount > 0) {
-            await interaction.editReply(`You Win! You earned ${amount} of cakes! `);
+            await interaction.editReply(
+              `You Win! You earned ${amount} of cakes! `,
+            );
           } else if (amount < 0) {
-            await interaction.editReply(`You lose.. You loses ${amount*-1} of cakes`);
+            await interaction.editReply(
+              `You lose.. You loses ${amount * -1} of cakes`,
+            );
           }
         } else {
           throw new Error('');
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
         const errorString = !e.response.data.message
           ? 'Internal Server Error: Plz contact admin'
           : e.response.data.message;
         await interaction.editReply(`${errorString}`);
       }
-    }
+    },
   },
 
   member: {
