@@ -31,4 +31,3 @@ jobs:
             cd bot
             node deploy-commands.js
             pm2 start node bot-main.js
-            whoami
