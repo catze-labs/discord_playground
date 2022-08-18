@@ -14,6 +14,6 @@ export class AppController {
 
   @Get('/ping')
   ping(): string {
-    return new Date().toString();
+    return Date.now().toString();
   }
 }

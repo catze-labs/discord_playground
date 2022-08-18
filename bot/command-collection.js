@@ -4,7 +4,7 @@ require('dotenv').config();
 module.exports = {
   ping: {
     async exec(interaction) {
-      const startMill = new Date();
+      const startMill = Date.now();
       let reqMill = null;
 
       // 봇 지연응답 으로 설정
@@ -18,7 +18,7 @@ module.exports = {
         });
 
         // 응답 끝난 시간
-        const doneMill = new Date();
+        const doneMill = Date.now();
 
         // 서버가 응답 받은 시간
         reqMill = new Date(pongReuslt.data);
