@@ -34,8 +34,6 @@ export class BotService {
       );
     }
 
-
-
     try {
       await this.prisma.patchUser(patchUserDto);
     } catch (e) {
@@ -123,11 +121,11 @@ export class BotService {
   }
 
 
-  @Cron('5 * * * * *')
-  // @Interval(5000)
-  handleCron() {
-    this.logger.debug('Called when the current second is 5');
-  }
+  // @Cron('5 * * * * *')
+  // // @Interval(5000)
+  // handleCron() {
+  //   this.logger.debug('Called when the current second is 5');
+  // }
 
   secondsToHMS(seconds: number) {
     return `${parseInt((seconds / 3600).toString())} h ${parseInt(
