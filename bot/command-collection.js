@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { EmbedBuilder } = require('discord.js');
+const Helper = require('./helper');
 require('dotenv').config();
 module.exports = {
   ping: {
