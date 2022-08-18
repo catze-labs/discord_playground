@@ -1,12 +1,15 @@
 const moment = require('moment');
 const MAX_ARRAY_LENGTH = 100;
-const serverHealthStatusArray = [];
-let interval = null;
+
+const serverHealthStatus = {
+  healthStatusArray: [],
+  healthStatusMonitoringInterval: null,
+};
 
 module.exports = {
   socket: {
     connectedHandler: () => {
-      serverHealthStatusArray = [];
+      serverHealthStatus.healthStatusArray = [];
       console.log(
         `Socket is established Server <> Bot at ${moment().format(
           'YY-MM-DD hh:mm:ss',
@@ -20,8 +23,8 @@ module.exports = {
         )}`,
       );
 
-      serverHealthStatusArray = [];
-      interval = null;
+      serverHealthStatus.serverHealthStatusArray = [];
+      serverHealthStatus.healthStatusMonitoringInterval = null;
     },
     // 단발성 체크
     healthCheckEmitHandler: (socket) => {
@@ -33,39 +36,42 @@ module.exports = {
     },
     // 지속적 체크
     healthCheckMonitoringHandler: (socket, milliseconds) => {
-      if (!interval) {
+      if (!serverHealthStatus.healthStatusMonitoringInterval) {
         console.log(
           `Start monitoring server health status at ${moment().format(
             'YY-MM-DD hh:mm:ss',
           )} every ${milliseconds / 1000} sec.`,
         );
 
-        interval = setInterval(() => socket.emit('health_check'), milliseconds);
-        return interval;
+        serverHealthStatus.healthStatusMonitoringInterval = setInterval(
+          () => socket.emit('health_check'),
+          milliseconds,
+        );
+        return serverHealthStatus.healthStatusMonitoringInterval;
       } else {
-        return interval;
+        return serverHealthStatus.healthStatusMonitoringInterval;
       }
     },
     clearHealthCheckMonitoring: (getResult = true) => {
-      clearInterval(interval);
+      clearInterval(serverHealthStatus.healthStatusMonitoringInterval);
       console.log(
         `End of monitoring server health status at ${moment().format(
           'YY-MM-DD hh:mm:ss',
         )}`,
       );
-      interval = null;
+      serverHealthStatus.healthStatusMonitoringInterval = null;
 
       if (getResult) {
-        return serverHealthStatusArray;
+        return serverHealthStatus.healthStatusArray;
       }
     },
     healthResponseHander: (data) => {
       console.log(data);
-      if (serverHealthStatusArray.length < MAX_ARRAY_LENGTH) {
-        serverHealthStatusArray.push(data);
+      if (serverHealthStatus.healthStatusArray.length < MAX_ARRAY_LENGTH) {
+        serverHealthStatus.healthStatusArray.push(data);
       } else {
-        serverHealthStatusArray.shift();
-        serverHealthStatusArray.push(data);
+        serverHealthStatus.healthStatusArray.shift();
+        serverHealthStatus.healthStatusArray.push(data);
       }
     },
   },
@@ -74,7 +80,7 @@ module.exports = {
   },
   getServerHealthStatusArray: function (count = MAX_ARRAY_LENGTH, asc = true) {
     return asc
-      ? serverHealthStatusArray.splice(0, count)
-      : serverHealthStatusArray.reverse().splice(0, count);
+      ? serverHealthStatus.healthStatusArray.splice(0, count)
+      : serverHealthStatus.healthStatusArray.reverse().splice(0, count);
   },
 };
